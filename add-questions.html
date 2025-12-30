@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة أسئلة - تحدي النخبة</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f5f5f5; color: #333; padding: 20px; direction: rtl; }
+        
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        h1 { color: #1a237e; margin-bottom: 20px; text-align: center; }
+        
+        .form-group { margin-bottom: 20px; }
+        
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #1a237e; }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus { 
+            border-color: #1a237e; 
+            outline: none; 
+        }
+        
+        .btn { 
+            background: linear-gradient(135deg, #1a237e, #311b92); 
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            border-radius: 25px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3); }
+        
+        .btn-success { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+        
+        .btn-danger { background: linear-gradient(135deg, #F44336, #C62828); }
+        
+        .status { 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 15px 0; 
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success { background: #E8F5E9; color: #2E7D32; border: 1px solid #4CAF50; }
+        .error { background: #FFEBEE; color: #C62828; border: 1px solid #F44336; }
+        .loading { background: #FFF3E0; color: #EF6C00; border: 1px solid #FF9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-database"></i> إضافة أسئلة لقاعدة البيانات</h1>
+        
+        <!-- حالة الاتصال -->
+        <div id="connectionStatus" class="status">جاري التحقق من الاتصال...</div>
+        
+        <!-- نموذج إضافة سؤال -->
+        <div class="form-group">
+            <label for="question">السؤال:</label>
+            <textarea id="question" rows="3" placeholder="أدخل نص السؤال..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="category">القسم:</label>
+            <select id="category">
+                <option value="football">⚽ كرة قدم</option>
+                <option value="movies">🎬 أفلام</option>
+                <option value="music">🎵 موسيقى</option>
+                <option value="islamic">🕌 إسلاميات</option>
+                <option value="brands">🛍️ براندات</option>
+                <option value="general">🌍 ثقافة عامة</option>
+                <option value="history">🏛️ التاريخ</option>
+                <option value="science">🔬 العلوم</option>
+                <option value="geography">🗺️ الجغرافيا</option>
+                <option value="math">➗ الرياضيات</option>
+                <option value="arts">🎨 الفنون</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="difficulty">الصعوبة:</label>
+            <select id="difficulty">
+                <option value="easy">سهل (10 نقاط)</option>
+                <option value="medium" selected>متوسط (15 نقطة)</option>
+                <option value="hard">صعب (20 نقطة)</option>
+            </select>
+        </div>
+        
+        <!-- الخيارات -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+            <div class="form-group">
+                <label for="option1">الخيار 1:</label>
+                <input type="text" id="option1" placeholder="الخيار الأول">
+            </div>
+            <div class="form-group">
+                <label for="option2">الخيار 2:</label>
+                <input type="text" id="option2" placeholder="الخيار الثاني">
+            </div>
+            <div class="form-group">
+                <label for="option3">الخيار 3:</label>
+                <input type="text" id="option3" placeholder="الخيار الثالث">
+            </div>
+            <div class="form-group">
+                <label for="option4">الخيار 4:</label>
+                <input type="text" id="option4" placeholder="الخيار الرابع">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="correctAnswer">الإجابة الصحيحة:</label>
+            <select id="correctAnswer">
+                <option value="1">الخيار 1</option>
+                <option value="2">الخيار 2</option>
+                <option value="3">الخيار 3</option>
+                <option value="4">الخيار 4</option>
+            </select>
+        </div>
+        
+        <!-- الأزرار -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-success" onclick="addQuestion()">
+                <i class="fas fa-plus"></i> إضافة السؤال
+            </button>
+            <button class="btn" onclick="addSampleQuestions()">
+                <i class="fas fa-magic"></i> إضافة أسئلة تجريبية
+            </button>
+            <button class="btn btn-danger" onclick="clearAllQuestions()">
+                <i class="fas fa-trash"></i> مسح كل الأسئلة
+            </button>
+        </div>
+        
+        <!-- الإحصائيات -->
+        <div id="stats" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h3><i class="fas fa-chart-bar"></i> إحصائيات قاعدة البيانات</h3>
+            <div id="questionsCount">جاري تحميل الإحصائيات...</div>
+        </div>
+    </div>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <script>
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9oqFsQhBhZyKzusT7TVb-5X5gdPuFV44",
+            authDomain: "elite-challenge-game.firebaseapp.com",
+            projectId: "elite-challenge-game",
+            storageBucket: "elite-challenge-game.firebasestorage.app",
+            messagingSenderId: "346399841028",
+            appId: "1:346399841028:web:273ff978c466ab85c3ce51",
+            measurementId: "G-EX6R24YFVG"
+        };
+        
+        // تهيئة Firebase
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            document.getElementById('connectionStatus').innerHTML = 
+                '<div class="status success"><i class="fas fa-check-circle"></i> ✅ متصل بقاعدة البيانات بنجاح!</div>';
+            loadStats();
+        } catch (error) {
+            document.getElementById('connectionStatus').innerHTML = 
+                `<div class="status error"><i class="fas fa-times-circle"></i> ❌ خطأ في الاتصال: ${error.message}</div>`;
+        }
+        
+        // دالة إضافة سؤال
+        async function addQuestion() {
+            const question = {
+                text: document.getElementById('question').value,
+                category: document.getElementById('category').value,
+                difficulty: document.getElementById('difficulty').value,
+                options: [
+                    document.getElementById('option1').value,
+                    document.getElementById('option2').value,
+                    document.getElementById('option3').value,
+                    document.getElementById('option4').value
+                ],
+                correctAnswer: parseInt(document.getElementById('correctAnswer').value),
+                points: getPointsByDifficulty(document.getElementById('difficulty').value),
+                createdAt: new Date().toISOString()
+            };
+            
+            // التحقق من البيانات
+            if (!question.text || question.options.some(opt => !opt)) {
+                alert('❌ يرجى ملء كل الحقول!');
+                return;
+            }
+            
+            try {
+                // إضافة السؤال لقاعدة البيانات
+                await db.collection('questions').add(question);
+                
+                // إظهار رسالة نجاح
+                document.getElementById('connectionStatus').innerHTML = 
+                    `<div class="status success"><i class="fas fa-check-circle"></i> ✅ تم إضافة السؤال بنجاح!</div>`;
+                
+                // مسح الحقول
+                clearForm();
+                
+                // تحديث الإحصائيات
+                loadStats();
+                
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = 
+                    `<div class="status error"><i class="fas fa-times-circle"></i> ❌ خطأ: ${error.message}</div>`;
+            }
+        }
+        
+        // دالة إضافة أسئلة تجريبية
+        async function addSampleQuestions() {
+            const sampleQuestions = [
+                {
+                    text: "من هو الهداف التاريخي لكأس العالم؟",
+                    category: "football",
+                    difficulty: "easy",
+                    options: ["ليونيل ميسي", "كريستيانو رونالدو", "ميروسلاف كلوزه", "بيليه"],
+                    correctAnswer: 3,
+                    points: 10
+                },
+                {
+                    text: "ما هي عاصمة فرنسا؟",
+                    category: "general",
+                    difficulty: "easy",
+                    options: ["باريس", "لندن", "روما", "برلين"],
+                    correctAnswer: 1,
+                    points: 10
+                },
+                {
+                    text: "كم عدد سور القرآن؟",
+                    category: "islamic",
+                    difficulty: "easy",
+                    options: ["110", "112", "114", "120"],
+                    correctAnswer: 3,
+                    points: 10
+                }
+            ];
+            
+            document.getElementById('connectionStatus').innerHTML = 
+                '<div class="status loading"><i class="fas fa-spinner fa-spin"></i> جاري إضافة الأسئلة التجريبية...</div>';
+            
+            try {
+                // إضافة كل الأسئلة
+                for (const question of sampleQuestions) {
+                    await db.collection('questions').add({
+                        ...question,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<div class="status success"><i class="fas fa-check-circle"></i> ✅ تم إضافة 3 أسئلة تجريبية بنجاح!</div>';
+                
+                loadStats();
+                
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = 
+                    `<div class="status error"><i class="fas fa-times-circle"></i> ❌ خطأ: ${error.message}</div>`;
+            }
+        }
+        
+        // دالة تحميل الإحصائيات
+        async function loadStats() {
+            try {
+                const snapshot = await db.collection('questions').get();
+                const count = snapshot.size;
+                
+                // تجميع حسب القسم
+                const categories = {};
+                snapshot.forEach(doc => {
+                    const cat = doc.data().category;
+                    categories[cat] = (categories[cat] || 0) + 1;
+                });
+                
+                let statsHTML = `<p>إجمالي الأسئلة: <strong>${count}</strong></p>`;
+                statsHTML += `<p>التوزيع حسب الأقسام:</p><ul>`;
+                
+                for (const [cat, count] of Object.entries(categories)) {
+                    statsHTML += `<li>${getCategoryName(cat)}: ${count} سؤال</li>`;
+                }
+                
+                statsHTML += `</ul>`;
+                document.getElementById('questionsCount').innerHTML = statsHTML;
+                
+            } catch (error) {
+                document.getElementById('questionsCount').innerHTML = 
+                    `<p style="color: #F44336;">❌ خطأ في تحميل الإحصائيات</p>`;
+            }
+        }
+        
+        // دالة مسح كل الأسئلة
+        async function clearAllQuestions() {
+            if (!confirm('⚠️ هل أنت متأكد من مسح كل الأسئلة؟ لا يمكن التراجع عن هذا الإجراء!')) {
+                return;
+            }
+            
+            document.getElementById('connectionStatus').innerHTML = 
+                '<div class="status loading"><i class="fas fa-spinner fa-spin"></i> جاري مسح الأسئلة...</div>';
+            
+            try {
+                const snapshot = await db.collection('questions').get();
+                const batch = db.batch();
+                
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+                
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<div class="status success"><i class="fas fa-check-circle"></i> ✅ تم مسح كل الأسئلة بنجاح!</div>';
+                
+                loadStats();
+                
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = 
+                    `<div class="status error"><i class="fas fa-times-circle"></i> ❌ خطأ: ${error.message}</div>`;
+            }
+        }
+        
+        // دوال مساعدة
+        function getPointsByDifficulty(difficulty) {
+            switch(difficulty) {
+                case 'easy': return 10;
+                case 'medium': return 15;
+                case 'hard': return 20;
+                default: return 10;
+            }
+        }
+        
+        function getCategoryName(categoryCode) {
+            const categories = {
+                'football': 'كرة قدم',
+                'movies': 'أفلام',
+                'music': 'موسيقى',
+                'islamic': 'إسلاميات',
+                'brands': 'براندات',
+                'general': 'ثقافة عامة',
+                'history': 'التاريخ',
+                'science': 'العلوم',
+                'geography': 'الجغرافيا',
+                'math': 'الرياضيات',
+                'arts': 'الفنون'
+            };
+            return categories[categoryCode] || categoryCode;
+        }
+        
+        function clearForm() {
+            document.getElementById('question').value = '';
+            document.getElementById('option1').value = '';
+            document.getElementById('option2').value = '';
+            document.getElementById('option3').value = '';
+            document.getElementById('option4').value = '';
+            document.getElementById('correctAnswer').value = '1';
+        }
+    </script>
+</body>
+</html>
