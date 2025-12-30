@@ -3,455 +3,969 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👥 إعداد الفريقين - تحدي النخبة</title>
+    <title>الإعدادات - تحدي النخبة</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: linear-gradient(135deg, #1a237e, #311b92); color: white; min-height: 100vh; direction: rtl; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-
-        .setup-box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; margin: 20px 0; border: 2px solid rgba(255,215,0,0.3); }
-
-        .team-section { display: flex; gap: 30px; margin: 30px 0; flex-wrap: wrap; }
-        .team { flex: 1; min-width: 300px; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; }
-        .team-1 { border: 2px solid #4285F4; }
-        .team-2 { border: 2px solid #EA4335; }
-
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ffd700; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 16px; }
-
-        .player-item { background: rgba(255,255,255,0.05); padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-
-        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; margin: 10px; font-weight: bold; transition: all 0.3s; }
-        .btn-primary { background: linear-gradient(135deg, #ffd700, #ff6b00); color: #1a237e; }
-        .btn-secondary { background: transparent; color: white; border: 2px solid #ffd700; }
-        .btn:hover { transform: translateY(-3px); }
-
-        .categories { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
-        .category-tag { background: rgba(255,215,0,0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.3); cursor: pointer; }
-        .category-tag.selected { background: rgba(255,215,0,0.3); border-color: #ffd700; }
-
-        .room-code { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; text-align: center; font-size: 24px; letter-spacing: 5px; margin: 20px 0; }
+        /* ===== RESET ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        .remove-player { 
-            background: #F44336; 
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 100%); 
             color: white; 
-            border: none; 
-            width: 30px; 
-            height: 30px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
+            min-height: 100vh;
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: rgba(10, 25, 47, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #00d4ff;
+        }
+        
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: #00d4ff;
+            color: black;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-container {
+            max-width: 800px;
+            margin: 100px auto 40px;
+            padding: 0 30px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .page-subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+        
+        /* ===== SETTINGS SECTIONS ===== */
+        .settings-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .settings-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            color: #00d4ff;
+            font-size: 1.5rem;
+        }
+        
+        .section-header i {
+            font-size: 1.8rem;
+        }
+        
+        /* ===== SETTINGS OPTIONS ===== */
+        .setting-option {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .option-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        
+        .option-title {
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .option-description {
+            color: #aaa;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* ===== SWITCH TOGGLE ===== */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #00d4ff;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        /* ===== SELECT BOXES ===== */
+        .select-box {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .select-box option {
+            background: #0c2461;
+            color: white;
+        }
+        
+        /* ===== SLIDER ===== */
+        .slider-container {
+            padding: 20px 0;
+        }
+        
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .slider-value span {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        /* ===== COLOR PICKER ===== */
+        .color-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: 0.3s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            border-color: white;
+            transform: scale(1.1);
+        }
+        
+        /* ===== BUTTONS ===== */
+        .buttons-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
             justify-content: center;
         }
         
+        .btn-primary {
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            color: black;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        /* ===== USER PROFILE ===== */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        
+        .user-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .user-info p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .team-section {
+            .nav-container {
                 flex-direction: column;
+                gap: 20px;
             }
             
-            .team {
-                min-width: 100%;
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
             }
+            
+            .main-container {
+                margin-top: 150px;
+            }
+            
+            .page-title {
+                font-size: 2.2rem;
+            }
+            
+            .user-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* ===== ALERTS ===== */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .alert.success {
+            background: rgba(0, 176, 155, 0.9);
+            border-left: 5px solid #00b09b;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 style="text-align: center; color: #ffd700; margin-bottom: 30px;">
-            <i class="fas fa-users"></i> إعداد الفريقين
-        </h1>
-
-        <!-- معلومات الغرفة -->
-        <div class="setup-box">
-            <h3><i class="fas fa-door-open"></i> معلومات الغرفة</h3>
-            <input type="text" id="roomName" placeholder="اسم الغرفة (مثلاً: منافسة العائلة)" value="غرفة المنافسة">
-
-            <div class="room-code" id="roomCodeDisplay">
-                كود الغرفة: <span id="roomCode" style="font-weight: bold;">ABCD1234</span>
-                <button onclick="copyRoomCode()" style="background: none; border: none; color: #ffd700; cursor: pointer; margin-right: 10px;">
-                    <i class="fas fa-copy"></i> نسخ
-                </button>
-                <button onclick="generateNewCode()" style="background: none; border: none; color: #4CAF50; cursor: pointer;">
-                    <i class="fas fa-sync-alt"></i> جديد
-                </button>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-crown"></i>
+                <span>تحدي النخبة</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> الرئيسية
+                </a>
+                <a href="game.html" class="nav-link">
+                    <i class="fas fa-gamepad"></i> اللعبة
+                </a>
+                <a href="setup.html" class="nav-link active">
+                    <i class="fas fa-cog"></i> الإعدادات
+                </a>
+                <a href="admin.html" class="nav-link">
+                    <i class="fas fa-user-shield"></i> التحكم
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> خروج
+                </a>
             </div>
+        </div>
+    </nav>
 
-            <p style="color: #bbbbbb; text-align: center;">
-                <i class="fas fa-share-alt"></i> شارك هذا الكود مع أصدقائك لينضموا
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-sliders-h"></i> إعدادات اللعبة
+            </h1>
+            <p class="page-subtitle">
+                خصص تجربة اللعب حسب رغبتك واضبط الإعدادات
             </p>
         </div>
 
-        <!-- الفريقين -->
-        <div class="team-section">
-            <!-- الفريق الأول -->
-            <div class="team team-1">
-                <h3 style="color: #4285F4;"><i class="fas fa-user-friends"></i> الفريق الأول</h3>
-                <input type="text" id="team1Name" placeholder="اسم الفريق الأول" value="النمور" style="border-color: #4285F4;">
-
-                <h4 style="margin-top: 20px;"><i class="fas fa-users"></i> اللاعبين:</h4>
-                <div id="team1Players">
-                    <div class="player-item">
-                        <span>👑 أنت (قائد الفريق)</span>
-                        <input type="text" placeholder="اسمك" id="player1Name" style="width: 150px; padding: 5px;">
-                    </div>
-                </div>
-
-                <button class="btn-secondary" onclick="addPlayer(1)" style="width: 100%; border-color: #4285F4; color: #4285F4;">
-                    <i class="fas fa-user-plus"></i> إضافة لاعب
-                </button>
-                <p style="color: #bbbbbb; font-size: 14px; text-align: center; margin-top: 10px;">(الحد الأقصى: 4 لاعبين)</p>
+        <!-- User Profile -->
+        <div class="user-profile">
+            <div class="avatar">
+                <i class="fas fa-user"></i>
             </div>
-
-            <!-- الفريق الثاني -->
-            <div class="team team-2">
-                <h3 style="color: #EA4335;"><i class="fas fa-user-friends"></i> الفريق الثاني</h3>
-                <input type="text" id="team2Name" placeholder="اسم الفريق الثاني" value="الأسود" style="border-color: #EA4335;">
-
-                <h4 style="margin-top: 20px;"><i class="fas fa-users"></i> اللاعبين:</h4>
-                <div id="team2Players">
-                    <!-- سيتم إضافة اللاعبين ديناميكياً -->
-                </div>
-
-                <button class="btn-secondary" onclick="addPlayer(2)" style="width: 100%; border-color: #EA4335; color: #EA4335;">
-                    <i class="fas fa-user-plus"></i> إضافة لاعب
-                </button>
-                <p style="color: #bbbbbb; font-size: 14px; text-align: center; margin-top: 10px;">(الحد الأقصى: 4 لاعبين)</p>
+            <div class="user-info">
+                <h3 id="userName">محمد أحمد</h3>
+                <p id="userEmail">mohammed@example.com</p>
+                <p id="userType">لاعب</p>
             </div>
         </div>
 
-        <!-- إعدادات اللعبة -->
-        <div class="setup-box">
-            <h3><i class="fas fa-cog"></i> إعدادات اللعبة</h3>
-
-            <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 200px;">
-                    <label>عدد الأسئلة:</label>
-                    <select id="questionCount">
-                        <option value="5">5 أسئلة</option>
-                        <option value="10" selected>10 أسئلة</option>
-                        <option value="15">15 أسئلة</option>
-                        <option value="20">20 أسئلة</option>
-                    </select>
+        <!-- Settings Sections -->
+        <div class="settings-sections">
+            <!-- Section 1: Game Settings -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-gamepad"></i>
+                    <h2>إعدادات اللعبة</h2>
                 </div>
-
-                <div style="flex: 1; min-width: 200px;">
-                    <label>وقت السؤال:</label>
-                    <select id="questionTime">
-                        <option value="20">20 ثانية</option>
-                        <option value="30" selected>30 ثانية</option>
-                        <option value="45">45 ثانية</option>
-                        <option value="60">60 ثانية</option>
-                    </select>
+                
+                <div class="setting-option">
+                    <div class="option-label" onclick="toggleSound()">
+                        <div>
+                            <div class="option-title">🎵 صوت اللعبة</div>
+                            <div class="option-description">
+                                تشغيل أو إيقاف صوت المؤثرات والموسيقى
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="soundToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
-
-                <div style="flex: 1; min-width: 200px;">
-                    <label>الصعوبة:</label>
-                    <select id="difficulty">
+                
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">⏱️ وقت كل سؤال</div>
+                            <div class="option-description">
+                                المدة الزمنية للإجابة على كل سؤال
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-value">
+                            <span>10 ثواني</span>
+                            <span id="timeValue">30 ثواني</span>
+                            <span>60 ثواني</span>
+                        </div>
+                        <input type="range" id="timeSlider" min="10" max="60" value="30">
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">📊 مستوى الصعوبة</div>
+                            <div class="option-description">
+                                اختر مستوى التحدي الذي يناسبك
+                            </div>
+                        </div>
+                    </div>
+                    <select class="select-box" id="difficultySelect">
                         <option value="easy">سهل</option>
                         <option value="medium" selected>متوسط</option>
                         <option value="hard">صعب</option>
+                        <option value="expert">خبير</option>
                     </select>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">🎯 عدد الأسئلة</div>
+                            <div class="option-description">
+                                عدد الأسئلة في كل جولة
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-value">
+                            <span>5 أسئلة</span>
+                            <span id="questionsValue">10 أسئلة</span>
+                            <span>20 سؤال</span>
+                        </div>
+                        <input type="range" id="questionsSlider" min="5" max="20" value="10">
+                    </div>
                 </div>
             </div>
 
-            <!-- الأقسام -->
-            <h4><i class="fas fa-th-large"></i> اختر الأقسام:</h4>
-            <div class="categories" id="categoriesList">
-                <div class="category-tag selected" data-category="all" onclick="toggleCategory('all')">الكل</div>
-                <div class="category-tag" data-category="football" onclick="toggleCategory('football')">⚽ كرة قدم</div>
-                <div class="category-tag" data-category="movies" onclick="toggleCategory('movies')">🎬 أفلام</div>
-                <div class="category-tag" data-category="music" onclick="toggleCategory('music')">🎵 موسيقى</div>
-                <div class="category-tag" data-category="islamic" onclick="toggleCategory('islamic')">🕌 إسلاميات</div>
-                <div class="category-tag" data-category="brands" onclick="toggleCategory('brands')">🛍️ براندات</div>
-                <div class="category-tag" data-category="general" onclick="toggleCategory('general')">🌍 ثقافة عامة</div>
+            <!-- Section 2: Appearance Settings -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-palette"></i>
+                    <h2>المظهر والتصميم</h2>
+                </div>
                 
-                <!-- الأقسام الجديدة -->
-                <div class="category-tag" data-category="history" onclick="toggleCategory('history')">🏛️ التاريخ</div>
-                <div class="category-tag" data-category="science" onclick="toggleCategory('science')">🔬 العلوم</div>
-                <div class="category-tag" data-category="geography" onclick="toggleCategory('geography')">🗺️ الجغرافيا</div>
-                <div class="category-tag" data-category="math" onclick="toggleCategory('math')">➗ الرياضيات</div>
-                <div class="category-tag" data-category="arts" onclick="toggleCategory('arts')">🎨 الفنون</div>
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">🌙 الوضع الليلي</div>
+                            <div class="option-description">
+                                تبديل بين الوضع الليلي والنهاري
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">🎨 لون السمة</div>
+                            <div class="option-description">
+                                اختر اللون الرئيسي للواجهة
+                            </div>
+                        </div>
+                    </div>
+                    <div class="color-options">
+                        <div class="color-option active" style="background: #00d4ff;" onclick="setThemeColor('#00d4ff')"></div>
+                        <div class="color-option" style="background: #ff4757;" onclick="setThemeColor('#ff4757')"></div>
+                        <div class="color-option" style="background: #2ed573;" onclick="setThemeColor('#2ed573')"></div>
+                        <div class="color-option" style="background: #ffa502;" onclick="setThemeColor('#ffa502')"></div>
+                        <div class="color-option" style="background: #3742fa;" onclick="setThemeColor('#3742fa')"></div>
+                        <div class="color-option" style="background: #a55eea;" onclick="setThemeColor('#a55eea')"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">🔤 حجم الخط</div>
+                            <div class="option-description">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-value">
+                            <span>صغير</span>
+                            <span id="fontSizeValue">متوسط</span>
+                            <span>كبير</span>
+                        </div>
+                        <input type="range" id="fontSizeSlider" min="14" max="24" value="18">
+                    </div>
+                </div>
             </div>
-            
-            <p style="color: #bbbbbb; margin-top: 10px;">
-                <i class="fas fa-info-circle"></i> اختر "الكل" أو اختر أقسام محددة
-            </p>
-        </div>
 
-        <!-- أزرار التحكم -->
-        <div style="text-align: center; margin-top: 40px;">
-            <button class="btn-secondary" onclick="goBack()">
-                <i class="fas fa-arrow-right"></i> رجوع
-            </button>
+            <!-- Section 3: Account Settings -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-user-cog"></i>
+                    <h2>إعدادات الحساب</h2>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label">
+                        <div>
+                            <div class="option-title">📧 إشعارات البريد</div>
+                            <div class="option-description">
+                                تلقي إشعارات عن التحديثات والإنجازات
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="notificationsToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label" onclick="showPrivacySettings()">
+                        <div>
+                            <div class="option-title">🔒 الخصوصية</div>
+                            <div class="option-description">
+                                إعدادات الخصوصية والحساب
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label" onclick="showChangePassword()">
+                        <div>
+                            <div class="option-title">🔑 تغيير كلمة المرور</div>
+                            <div class="option-description">
+                                تحديث كلمة مرور حسابك
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="option-label" onclick="exportData()">
+                        <div>
+                            <div class="option-title">💾 تصدير البيانات</div>
+                            <div class="option-description">
+                                حفظ إحصائياتك وتاريخ اللعب
+                            </div>
+                        </div>
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+            </div>
 
-            <button class="btn-primary" onclick="startTeamGame()">
-                <i class="fas fa-play"></i> بدء المنافسة
-            </button>
+            <!-- Action Buttons -->
+            <div class="buttons-group">
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> حفظ الإعدادات
+                </button>
+                <button class="btn btn-secondary" onclick="resetSettings()">
+                    <i class="fas fa-undo"></i> إعادة تعيين
+                </button>
+                <button class="btn btn-secondary" onclick="startGameWithSettings()">
+                    <i class="fas fa-play"></i> بدء اللعبة
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Alerts Container -->
+    <div id="alertContainer"></div>
+
+    <!-- JavaScript -->
     <script>
-        // ========== متغيرات النظام ==========
-        let gameConfig = {
-            roomCode: generateRoomCode(),
-            roomName: "غرفة المنافسة",
-            team1: { 
-                name: "النمور", 
-                players: [],
-                score: 0,
-                currentPlayerIndex: 0
-            },
-            team2: { 
-                name: "الأسود", 
-                players: [],
-                score: 0,
-                currentPlayerIndex: 0
-            },
-            selectedCategories: ["all"],
-            questionCount: 10,
-            questionTime: 30,
-            difficulty: "medium"
-        };
-
-        // ========== عند تحميل الصفحة ==========
-        window.onload = function() {
-            // عرض كود الغرفة
-            document.getElementById('roomCode').textContent = gameConfig.roomCode;
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('صفحة الإعدادات جاهزة');
             
-            // الحصول على اسم اللاعب من localStorage
-            const playerName = localStorage.getItem('playerName') || 'لاعب';
-            document.getElementById('player1Name').value = playerName;
+            // تحميل بيانات المستخدم
+            loadUserData();
             
-            // إضافة اللاعب الحالي للفريق الأول
-            gameConfig.team1.players.push(playerName);
+            // تحميل الإعدادات المحفوظة
+            loadSavedSettings();
             
-            // تحديث عرض اللاعبين
-            updateTeamDisplay(1);
+            // إعداد event listeners
+            setupEventListeners();
+        });
+        
+        // ===== LOAD USER DATA =====
+        function loadUserData() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
             
-            console.log('✅ إعدادات الفريقين جاهزة');
-            console.log('كود الغرفة:', gameConfig.roomCode);
-        };
-
-        // ========== توليد كود الغرفة ==========
-        function generateRoomCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 8; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            if (user.email) {
+                document.getElementById('userName').textContent = user.name || 'لاعب';
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userType').textContent = user.type === 'admin' ? 'مشرف' : 'لاعب';
+            } else {
+                // إذا لم يكن مسجل دخول
+                showAlert('error', '❌ يجب تسجيل الدخول أولاً');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
             }
-            return code;
         }
-
-        // ========== توليد كود جديد ==========
-        function generateNewCode() {
-            gameConfig.roomCode = generateRoomCode();
-            document.getElementById('roomCode').textContent = gameConfig.roomCode;
-            alert('✅ تم إنشاء كود غرفة جديد: ' + gameConfig.roomCode);
+        
+        // ===== LOAD SAVED SETTINGS =====
+        function loadSavedSettings() {
+            const settings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+            
+            // الصوت
+            if (settings.sound !== undefined) {
+                document.getElementById('soundToggle').checked = settings.sound;
+            }
+            
+            // الوقت
+            if (settings.time) {
+                document.getElementById('timeSlider').value = settings.time;
+                updateTimeValue();
+            }
+            
+            // الصعوبة
+            if (settings.difficulty) {
+                document.getElementById('difficultySelect').value = settings.difficulty;
+            }
+            
+            // عدد الأسئلة
+            if (settings.questions) {
+                document.getElementById('questionsSlider').value = settings.questions;
+                updateQuestionsValue();
+            }
+            
+            // الوضع الليلي
+            if (settings.darkMode !== undefined) {
+                document.getElementById('darkModeToggle').checked = settings.darkMode;
+                toggleDarkMode(settings.darkMode);
+            }
+            
+            // لون السمة
+            if (settings.themeColor) {
+                setThemeColor(settings.themeColor, false);
+            }
+            
+            // حجم الخط
+            if (settings.fontSize) {
+                document.getElementById('fontSizeSlider').value = settings.fontSize;
+                updateFontSizeValue();
+                applyFontSize(settings.fontSize);
+            }
+            
+            // الإشعارات
+            if (settings.notifications !== undefined) {
+                document.getElementById('notificationsToggle').checked = settings.notifications;
+            }
         }
-
-        // ========== نسخ كود الغرفة ==========
-        function copyRoomCode() {
-            const code = document.getElementById('roomCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('✅ تم نسخ كود الغرفة: ' + code);
-            }).catch(err => {
-                // طريقة بديلة إذا فشلت
-                const tempInput = document.createElement('input');
-                tempInput.value = code;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('✅ تم نسخ كود الغرفة: ' + code);
+        
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // سلايدر الوقت
+            document.getElementById('timeSlider').addEventListener('input', updateTimeValue);
+            
+            // سلايدر عدد الأسئلة
+            document.getElementById('questionsSlider').addEventListener('input', updateQuestionsValue);
+            
+            // سلايدر حجم الخط
+            document.getElementById('fontSizeSlider').addEventListener('input', function() {
+                updateFontSizeValue();
+                applyFontSize(this.value);
+            });
+            
+            // تبديل الوضع الليلي
+            document.getElementById('darkModeToggle').addEventListener('change', function() {
+                toggleDarkMode(this.checked);
             });
         }
-
-        // ========== إضافة لاعب ==========
-        function addPlayer(teamNumber) {
-            const teamDiv = document.getElementById(`team${teamNumber}Players`);
-            const playerCount = teamDiv.children.length;
-            
-            if (playerCount >= 4) {
-                alert('❌ الحد الأقصى 4 لاعبين لكل فريق');
-                return;
-            }
-            
-            const playerDiv = document.createElement('div');
-            playerDiv.className = 'player-item';
-            playerDiv.innerHTML = `
-                <span>👤 لاعب ${playerCount}</span>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" placeholder="اسم اللاعب" class="player-input" 
-                           oninput="updatePlayerName(${teamNumber}, ${playerCount}, this.value)"
-                           style="width: 120px; padding: 5px;">
-                    <button class="remove-player" onclick="removePlayer(this, ${teamNumber}, ${playerCount})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            
-            teamDiv.appendChild(playerDiv);
-            
-            // إضافة للبيانات
-            if (teamNumber === 1) {
-                gameConfig.team1.players.push('');
-            } else {
-                gameConfig.team2.players.push('');
-            }
-            
-            console.log(`تمت إضافة لاعب جديد للفريق ${teamNumber}`);
+        
+        // ===== UPDATE DISPLAY VALUES =====
+        function updateTimeValue() {
+            const value = document.getElementById('timeSlider').value;
+            document.getElementById('timeValue').textContent = value + ' ثواني';
         }
-
-        // ========== تحديث اسم اللاعب ==========
-        function updatePlayerName(teamNumber, playerIndex, playerName) {
-            if (teamNumber === 1) {
-                gameConfig.team1.players[playerIndex] = playerName;
-            } else {
-                gameConfig.team2.players[playerIndex] = playerName;
-            }
+        
+        function updateQuestionsValue() {
+            const value = document.getElementById('questionsSlider').value;
+            document.getElementById('questionsValue').textContent = value + ' أسئلة';
         }
-
-        // ========== إزالة لاعب ==========
-        function removePlayer(button, teamNumber, playerIndex) {
-            const playerDiv = button.parentElement.parentElement;
-            playerDiv.remove();
-            
-            // إزالة من البيانات
-            if (teamNumber === 1) {
-                gameConfig.team1.players.splice(playerIndex, 1);
-            } else {
-                gameConfig.team2.players.splice(playerIndex, 1);
-            }
-            
-            // تحديث أرقام اللاعبين
-            updateTeamDisplay(teamNumber);
+        
+        function updateFontSizeValue() {
+            const value = document.getElementById('fontSizeSlider').value;
+            let sizeText = 'متوسط';
+            if (value < 16) sizeText = 'صغير';
+            else if (value > 20) sizeText = 'كبير';
+            document.getElementById('fontSizeValue').textContent = sizeText;
         }
-
-        // ========== تحديث عرض الفريق ==========
-        function updateTeamDisplay(teamNumber) {
-            const teamDiv = document.getElementById(`team${teamNumber}Players`);
-            const players = teamNumber === 1 ? gameConfig.team1.players : gameConfig.team2.players;
-            
-            // تحديث أرقام اللاعبين
-            const playerItems = teamDiv.querySelectorAll('.player-item');
-            playerItems.forEach((item, index) => {
-                const span = item.querySelector('span');
-                if (index === 0) {
-                    span.innerHTML = '👑 أنت (قائد الفريق)';
-                } else {
-                    span.textContent = `👤 لاعب ${index}`;
-                }
+        
+        // ===== THEME FUNCTIONS =====
+        function setThemeColor(color, showAlert = true) {
+            // إزالة النشط من جميع الألوان
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
             });
+            
+            // إضافة النشط للون المختار
+            event.target.classList.add('active');
+            
+            // تطبيق اللون على السمة
+            document.documentElement.style.setProperty('--primary-color', color);
+            
+            if (showAlert) {
+                showAlertMessage('success', `✅ تم تغيير لون السمة`);
+            }
         }
-
-        // ========== اختيار الأقسام ==========
-        function toggleCategory(category) {
-            const tag = document.querySelector(`[data-category="${category}"]`);
-            const index = gameConfig.selectedCategories.indexOf(category);
-
-            if (category === 'all') {
-                // إذا اخترت "الكل"، إلغاء كل التحديدات الأخرى
-                document.querySelectorAll('.category-tag').forEach(t => {
-                    t.classList.remove('selected');
+        
+        function toggleDarkMode(enabled) {
+            if (enabled) {
+                document.body.style.backgroundColor = '#0a1929';
+                document.body.style.color = '#e0e0e0';
+                showAlertMessage('success', '🌙 تم تفعيل الوضع الليلي');
+            } else {
+                document.body.style.backgroundColor = '';
+                document.body.style.color = '';
+                showAlertMessage('success', '☀️ تم تفعيل الوضع النهاري');
+            }
+        }
+        
+        function applyFontSize(size) {
+            document.body.style.fontSize = size + 'px';
+        }
+        
+        // ===== SAVE SETTINGS =====
+        function saveSettings() {
+            const settings = {
+                sound: document.getElementById('soundToggle').checked,
+                time: parseInt(document.getElementById('timeSlider').value),
+                difficulty: document.getElementById('difficultySelect').value,
+                questions: parseInt(document.getElementById('questionsSlider').value),
+                darkMode: document.getElementById('darkModeToggle').checked,
+                themeColor: getActiveThemeColor(),
+                fontSize: parseInt(document.getElementById('fontSizeSlider').value),
+                notifications: document.getElementById('notificationsToggle').checked,
+                savedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('gameSettings', JSON.stringify(settings));
+            
+            showAlertMessage('success', '✅ تم حفظ الإعدادات بنجاح');
+        }
+        
+        function getActiveThemeColor() {
+            const activeColor = document.querySelector('.color-option.active');
+            return activeColor ? activeColor.style.backgroundColor : '#00d4ff';
+        }
+        
+        // ===== RESET SETTINGS =====
+        function resetSettings() {
+            if (confirm('⚠️ هل أنت متأكد من إعادة تعيين جميع الإعدادات إلى الافتراضية؟')) {
+                localStorage.removeItem('gameSettings');
+                
+                // إعادة التعيين للقيم الافتراضية
+                document.getElementById('soundToggle').checked = true;
+                document.getElementById('timeSlider').value = 30;
+                document.getElementById('difficultySelect').value = 'medium';
+                document.getElementById('questionsSlider').value = 10;
+                document.getElementById('darkModeToggle').checked = false;
+                document.getElementById('fontSizeSlider').value = 18;
+                document.getElementById('notificationsToggle').checked = true;
+                
+                // إعادة اللون الافتراضي
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.classList.remove('active');
+                    if (option.style.backgroundColor === 'rgb(0, 212, 255)') {
+                        option.classList.add('active');
+                    }
                 });
-                tag.classList.add('selected');
-                gameConfig.selectedCategories = ['all'];
-            } else {
-                // إلغاء "الكل" إذا كان محدداً
-                const allTag = document.querySelector('[data-category="all"]');
-                if (allTag.classList.contains('selected')) {
-                    allTag.classList.remove('selected');
-                    gameConfig.selectedCategories = [];
-                }
-
-                // تبديل حالة القسم
-                tag.classList.toggle('selected');
-
-                if (index === -1) {
-                    gameConfig.selectedCategories.push(category);
-                } else {
-                    gameConfig.selectedCategories.splice(index, 1);
-                }
-
-                // إذا ما في أقسام محددة، حدد "الكل"
-                if (gameConfig.selectedCategories.length === 0) {
-                    allTag.classList.add('selected');
-                    gameConfig.selectedCategories = ['all'];
-                }
+                
+                // تحديث القيم المعروضة
+                updateTimeValue();
+                updateQuestionsValue();
+                updateFontSizeValue();
+                toggleDarkMode(false);
+                applyFontSize(18);
+                
+                showAlertMessage('success', '🔄 تم إعادة تعيين الإعدادات');
             }
-
-            console.log('الأقسام المختارة:', gameConfig.selectedCategories);
         }
-
-        // ========== بدء اللعبة الجماعية ==========
-        function startTeamGame() {
-            // جمع البيانات
-            gameConfig.roomName = document.getElementById('roomName').value;
-            gameConfig.team1.name = document.getElementById('team1Name').value;
-            gameConfig.team2.name = document.getElementById('team2Name').value;
-            gameConfig.questionCount = parseInt(document.getElementById('questionCount').value);
-            gameConfig.questionTime = parseInt(document.getElementById('questionTime').value);
-            gameConfig.difficulty = document.getElementById('difficulty').value;
+        
+        // ===== START GAME =====
+        function startGameWithSettings() {
+            // حفظ الإعدادات أولاً
+            saveSettings();
             
-            // جمع أسماء اللاعبين من الفريق الأول (باستثناء القائد)
-            const team1Inputs = document.querySelectorAll('#team1Players .player-input');
-            gameConfig.team1.players = [document.getElementById('player1Name').value];
+            // تحضير بيانات اللعبة
+            const gameConfig = {
+                timePerQuestion: parseInt(document.getElementById('timeSlider').value),
+                difficulty: document.getElementById('difficultySelect').value,
+                totalQuestions: parseInt(document.getElementById('questionsSlider').value),
+                soundEnabled: document.getElementById('soundToggle').checked
+            };
             
-            team1Inputs.forEach((input, index) => {
-                if (index > 0 && input.value.trim()) {
-                    gameConfig.team1.players.push(input.value.trim());
-                }
-            });
+            localStorage.setItem('gameConfig', JSON.stringify(gameConfig));
             
-            // جمع أسماء اللاعبين من الفريق الثاني
-            const team2Inputs = document.querySelectorAll('#team2Players .player-input');
-            gameConfig.team2.players = [];
-            
-            team2Inputs.forEach(input => {
-                if (input.value.trim()) {
-                    gameConfig.team2.players.push(input.value.trim());
-                }
-            });
-            
-            // التحقق من صحة البيانات
-            if (!gameConfig.roomName.trim()) {
-                alert('❌ يرجى إدخال اسم الغرفة');
-                return;
-            }
-            
-            if (!gameConfig.team1.name.trim()) {
-                alert('❌ يرجى إدخال اسم الفريق الأول');
-                return;
-            }
-            
-            if (!gameConfig.team2.name.trim()) {
-                alert('❌ يرجى إدخال اسم الفريق الثاني');
-                return;
-            }
-            
-            if (gameConfig.team1.players.length < 1) {
-                alert('❌ يجب أن يكون هناك لاعب واحد على الأقل في الفريق الأول');
-                return;
-            }
-            
-            if (gameConfig.team2.players.length < 1) {
-                alert('❌ يجب أن يكون هناك لاعب واحد على الأقل في الفريق الثاني');
-                return;
-            }
-            
-            // حفظ إعدادات اللعبة
-            localStorage.setItem('teamGameConfig', JSON.stringify(gameConfig));
-            
-            console.log('✅ تم حفظ إعدادات اللعبة:', gameConfig);
+            showAlertMessage('success', '🚀 جاري تحضير اللعبة...');
             
             // الانتقال إلى صفحة اللعبة
-            window.location.href = 'team-game.html';
+            setTimeout(() => {
+                window.location.href = 'game.html';
+            }, 1500);
         }
-
-        // ========== العودة للصفحة السابقة ==========
-        function goBack() {
-            window.location.href = 'index.html';
+        
+        // ===== OTHER FUNCTIONS =====
+        function showPrivacySettings() {
+            showAlertMessage('info', '🔒 إعدادات الخصوصية قريباً');
+        }
+        
+        function showChangePassword() {
+            showAlertMessage('info', '🔑 تغيير كلمة المرور قريباً');
+        }
+        
+        function exportData() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const settings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+            
+            const data = {
+                user: user,
+                settings: settings,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `elite-challenge-data-${Date.now()}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showAlertMessage('success', '💾 تم تصدير البيانات بنجاح');
+        }
+        
+        function logout() {
+            if (confirm('⚠️ هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.removeItem('user');
+                showAlertMessage('success', '✅ تم تسجيل الخروج بنجاح');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }
+        }
+        
+        // ===== ALERT SYSTEM =====
+        function showAlertMessage(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${getAlertIcon(type)}"></i>
+                <span>${message}</span>
+            `;
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+        
+        function getAlertIcon(type) {
+            switch(type) {
+                case 'success': return 'check-circle';
+                case 'error': return 'exclamation-circle';
+                case 'info': return 'info-circle';
+                default: return 'info-circle';
+            }
         }
     </script>
 </body>
