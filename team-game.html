@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👥 منافسة الفريقين - تحدي النخبة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #1a237e, #311b92); color: white; min-height: 100vh; direction: rtl; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .room-header { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: center; }
+
+        .teams-display { display: flex; gap: 20px; margin: 30px 0; flex-wrap: wrap; }
+        .team-display { flex: 1; min-width: 300px; padding: 20px; border-radius: 15px; text-align: center; }
+        .team1-display { background: rgba(66, 133, 244, 0.1); border: 3px solid #4285F4; }
+        .team2-display { background: rgba(234, 67, 53, 0.1); border: 3px solid #EA4335; }
+
+        .score { font-size: 48px; font-weight: bold; margin: 10px 0; }
+        .team1-score { color: #4285F4; }
+        .team2-score { color: #EA4335; }
+
+        .current-turn { 
+            background: rgba(255,215,0,0.2); 
+            border: 2px solid #ffd700; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin: 20px 0; 
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        .game-area { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 30px; margin: 20px 0; }
+
+        .question-text { font-size: 24px; margin: 30px 0; line-height: 1.5; min-height: 100px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 15px; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+        .option-btn { 
+            padding: 20px; 
+            background: rgba(255,255,255,0.08); 
+            border: 2px solid transparent; 
+            border-radius: 15px; 
+            color: white; 
+            font-size: 18px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-btn:hover { background: rgba(255,255,255,0.12); border-color: #ffd700; transform: translateY(-3px); }
+        
+        .option-btn.correct { background: rgba(76,175,80,0.3); border-color: #4CAF50; }
+        .option-btn.wrong { background: rgba(244,67,54,0.3); border-color: #F44336; }
+        .option-btn.disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .timer-display { 
+            font-size: 72px; 
+            font-weight: bold; 
+            color: #ffd700; 
+            text-align: center; 
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; margin: 10px; font-weight: bold; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, #ffd700, #ff6b00); color: #1a237e; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.3); }
+        
+        .btn-secondary { 
+            background: transparent; 
+            color: white; 
+            border: 2px solid #ffd700; 
+            padding: 15px 30px; 
+            border-radius: 50px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            margin: 10px; 
+            font-weight: bold; 
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover { background: rgba(255,215,0,0.1); }
+
+        .players-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 10px 0; }
+        .player-tag { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; }
+        
+        .current-player-tag { 
+            background: linear-gradient(135deg, #ffd700, #ff6b00); 
+            color: #1a237e; 
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+        
+        .result-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #1a237e, #311b92);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            border: 3px solid #ffd700;
+        }
+        
+        .winner-trophy {
+            font-size: 80px;
+            color: #ffd700;
+            margin: 20px 0;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes celebrate {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @media (max-width: 768px) {
+            .teams-display {
+                flex-direction: column;
+            }
+            
+            .team-display {
+                min-width: 100%;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-display {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- معلومات الغرفة -->
+        <div class="room-header">
+            <h2 id="roomNameDisplay">غرفة المنافسة</h2>
+            <p style="color: #bbbbbb;">كود الغرفة: <span id="roomCodeDisplay" style="font-weight: bold;">ABCD1234</span></p>
+            <p style="color: #bbbbbb; margin-top: 10px;"><i class="fas fa-info-circle"></i> دور الفريق الحالي: <span id="currentTeamBadge" style="color: #ffd700;">الفريق الأول</span></p>
+        </div>
+
+        <!-- عرض الفريقين -->
+        <div class="teams-display">
+            <!-- الفريق الأول -->
+            <div class="team-display team1-display" id="team1Display">
+                <h3 id="team1Name">النمور</h3>
+                <div class="score team1-score" id="team1Score">0</div>
+                <div class="players-list" id="team1PlayersList">
+                    <!-- اللاعبين -->
+                </div>
+                <p style="color: #bbbbbb; margin-top: 10px;">النقاط: <span id="team1Points">0</span></p>
+            </div>
+
+            <!-- الفريق الثاني -->
+            <div class="team-display team2-display" id="team2Display">
+                <h3 id="team2Name">الأسود</h3>
+                <div class="score team2-score" id="team2Score">0</div>
+                <div class="players-list" id="team2PlayersList">
+                    <!-- اللاعبين -->
+                </div>
+                <p style="color: #bbbbbb; margin-top: 10px;">النقاط: <span id="team2Points">0</span></p>
+            </div>
+        </div>
+
+        <!-- دور الفريق الحالي -->
+        <div class="current-turn" id="currentTurnDisplay">
+            <h3><i class="fas fa-bullhorn"></i> الآن دور: <span id="currentTeamName" style="color: #ffd700;">الفريق الأول</span></h3>
+            <p id="currentPlayerInfo">اللاعب: <span id="currentPlayerName" style="font-weight: bold;">أحمد</span></p>
+            <p style="color: #bbbbbb; margin-top: 5px;">اختر الإجابة الصحيحة قبل انتهاء الوقت!</p>
+        </div>
+
+        <!-- المؤقت -->
+        <div class="timer-display" id="timerDisplay">30</div>
+
+        <!-- منطقة اللعبة -->
+        <div class="game-area">
+            <!-- معلومات السؤال -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p style="color: #bbbbbb;">السؤال <span id="questionNumber">1</span> من <span id="totalQuestions">10</span></p>
+                <p id="questionCategory" style="background: rgba(255,215,0,0.1); display: inline-block; padding: 5px 15px; border-radius: 20px;">كرة القدم</p>
+                <p style="color: #bbbbbb; margin-top: 10px;"><i class="fas fa-star"></i> القيمة: <span id="questionPoints" style="color: #ffd700;">10</span> نقطة</p>
+            </div>
+
+            <!-- السؤال -->
+            <div class="question-text" id="questionText">
+                جاري تحميل السؤال...
+            </div>
+
+            <!-- الخيارات -->
+            <div class="options-grid">
+                <button class="option-btn" id="option1" onclick="submitAnswer(1)">الخيار 1</button>
+                <button class="option-btn" id="option2" onclick="submitAnswer(2)">الخيار 2</button>
+                <button class="option-btn" id="option3" onclick="submitAnswer(3)">الخيار 3</button>
+                <button class="option-btn" id="option4" onclick="submitAnswer(4)">الخيار 4</button>
+            </div>
+        </div>
+
+        <!-- التحكم -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn-secondary" onclick="skipQuestion()" id="skipBtn">
+                <i class="fas fa-forward"></i> تخطي السؤال
+            </button>
+            
+            <button class="btn-primary" onclick="nextTurn()" id="nextTurnBtn" style="display: none;">
+                <i class="fas fa-arrow-left"></i> التبديل للفريق الآخر
+            </button>
+
+            <button class="btn-primary" onclick="endGame()" style="background: #f44336;">
+                <i class="fas fa-flag-checkered"></i> إنهاء المنافسة
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة النتائج -->
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-box">
+            <div class="winner-trophy" id="winnerIcon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            
+            <h2 id="winnerTitle" style="color: #ffd700; margin-bottom: 20px;">انتهت المنافسة!</h2>
+            
+            <div style="display: flex; justify-content: space-around; margin: 30px 0;">
+                <div>
+                    <h3 id="team1ResultName" style="color: #4285F4;">النمور</h3>
+                    <div style="font-size: 48px; font-weight: bold; color: #4285F4;" id="team1FinalScore">0</div>
+                    <p>نقطة</p>
+                </div>
+                
+                <div style="align-self: center; font-size: 24px; color: #bbbbbb;">VS</div>
+                
+                <div>
+                    <h3 id="team2ResultName" style="color: #EA4335;">الأسود</h3>
+                    <div style="font-size: 48px; font-weight: bold; color: #EA4335;" id="team2FinalScore">0</div>
+                    <p>نقطة</p>
+                </div>
+            </div>
+            
+            <div id="winnerMessage" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                <p style="font-size: 20px;">الفريق الفائز: <span id="winnerTeam" style="font-weight: bold; color: #ffd700;">التعادل!</span></p>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <button class="btn-primary" onclick="playAgain()" style="margin-right: 10px;">
+                    <i class="fas fa-redo"></i> منافسة جديدة
+                </button>
+                <button class="btn-secondary" onclick="goToHome()">
+                    <i class="fas fa-home"></i> العودة للرئيسية
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== متغيرات اللعبة ==========
+        let gameData = null;
+        let currentQuestionIndex = 0;
+        let currentTurn = 'team1'; // team1 أو team2
+        let currentPlayerIndex = 0;
+        let timeLeft = 30;
+        let timerInterval;
+        let answered = false;
+        let gameQuestions = [];
+        
+        // الأسئلة الموسعة
+        const allQuestions = {
+            football: [
+                { 
+                    question: "من هو الهداف التاريخي لكأس العالم؟", 
+                    correct: 3, 
+                    options: ["ليونيل ميسي", "كريستيانو رونالدو", "ميروسلاف كلوزه", "بيليه"],
+                    category: "كرة القدم",
+                    points: 10
+                },
+                { 
+                    question: "من فاز بكأس العالم 2022؟", 
+                    correct: 3, 
+                    options: ["البرازيل", "فرنسا", "الأرجنتين", "ألمانيا"],
+                    category: "كرة القدم",
+                    points: 10
+                },
+                { 
+                    question: "أي نادي يلقب بـ 'البارسا'؟", 
+                    correct: 2, 
+                    options: ["ريال مدريد", "برشلونة", "أتلتيكو مدريد", "فالنسيا"],
+                    category: "كرة القدم",
+                    points: 10
+                },
+                { 
+                    question: "كم مرة فازت البرازيل بكأس العالم؟", 
+                    correct: 4, 
+                    options: ["3 مرات", "4 مرات", "5 مرات", "6 مرات"],
+                    category: "كرة القدم",
+                    points: 15
+                }
+            ],
+            movies: [
+                { 
+                    question: "من مخرج فيلم 'الرسالة'؟", 
+                    correct: 2, 
+                    options: ["يوسف شاهين", "مصنطفى العقاد", "علي بدرخان", "حسين كمال"],
+                    category: "الأفلام",
+                    points: 10
+                },
+                { 
+                    question: "ما هو أول فيلم لأم كلثوم؟", 
+                    correct: 3, 
+                    options: ["سلامة", "نشيد الأمل", "وداد", "دنانير"],
+                    category: "الأفلام",
+                    points: 15
+                },
+                { 
+                    question: "من بطّل فيلم 'الممر' عن حرب أكتوبر؟", 
+                    correct: 4, 
+                    options: ["محمد رمضان", "محمد سعد", "أحمد عز", "أحمد السقا"],
+                    category: "الأفلام",
+                    points: 10
+                }
+            ],
+            music: [
+                { 
+                    question: "ما هي جنسية المطربة فيروز؟", 
+                    correct: 1, 
+                    options: ["لبنانية", "سورية", "مصرية", "عراقية"],
+                    category: "الموسيقى",
+                    points: 10
+                },
+                { 
+                    question: "من هو ملحن أغنية 'الأرض' لعبد الحليم حافظ؟", 
+                    correct: 2, 
+                    options: ["محمد عبد الوهاب", "بليغ حمدي", "رياض السنباطي", "كمال الطويل"],
+                    category: "الموسيقى",
+                    points: 20
+                }
+            ],
+            islamic: [
+                { 
+                    question: "كم عدد سور القرآن الكريم؟", 
+                    correct: 3, 
+                    options: ["110", "112", "114", "120"],
+                    category: "الإسلاميات",
+                    points: 10
+                },
+                { 
+                    question: "من أول الخلفاء الراشدين؟", 
+                    correct: 2, 
+                    options: ["عمر بن الخطاب", "أبو بكر الصديق", "عثمان بن عفان", "علي بن أبي طالب"],
+                    category: "الإسلاميات",
+                    points: 10
+                },
+                { 
+                    question: "كم عدد أركان الإسلام؟", 
+                    correct: 3, 
+                    options: ["4", "5", "6", "7"],
+                    category: "الإسلاميات",
+                    points: 10
+                }
+            ],
+            brands: [
+                { 
+                    question: "ما هو أصل شركة Nike؟", 
+                    correct: 1, 
+                    options: ["أمريكية", "ألمانية", "يابانية", "إيطالية"],
+                    category: "البراندات",
+                    points: 10
+                },
+                { 
+                    question: "أي من هذه الشركات متخصصة في السيارات الفاخرة؟", 
+                    correct: 4, 
+                    options: ["Samsung", "Nokia", "Dell", "Mercedes-Benz"],
+                    category: "البراندات",
+                    points: 10
+                }
+            ],
+            general: [
+                { 
+                    question: "ما هي عاصمة فرنسا؟", 
+                    correct: 1, 
+                    options: ["باريس", "لندن", "روما", "برلين"],
+                    category: "ثقافة عامة",
+                    points: 10
+                },
+                { 
+                    question: "ما هو أطول نهر في العالم؟", 
+                    correct: 3, 
+                    options: ["الأمازون", "الميسيسيبي", "النيل", "الدانوب"],
+                    category: "ثقافة عامة",
+                    points: 15
+                },
+                { 
+                    question: "كم عدد قارات العالم؟", 
+                    correct: 2, 
+                    options: ["6", "7", "5", "8"],
+                    category: "ثقافة عامة",
+                    points: 10
+                },
+                { 
+                    question: "ما هو الغاز الأكثر انتشاراً في الغلاف الجوي؟", 
+                    correct: 3, 
+                    options: ["الأكسجين", "ثاني أكسيد الكربون", "النيتروجين", "الهيدروجين"],
+                    category: "ثقافة عامة",
+                    points: 15
+                },
+                { 
+                    question: "من اكتشف الجاذبية الأرضية؟", 
+                    correct: 4, 
+                    options: ["أينشتاين", "غاليليو", "تسلا", "نيوتن"],
+                    category: "ثقافة عامة",
+                    points: 10
+                }
+            ]
+        };
+
+        // ========== عند تحميل الصفحة ==========
+        window.onload = function() {
+            // تحميل إعدادات اللعبة
+            const savedConfig = localStorage.getItem('teamGameConfig');
+
+            if (!savedConfig) {
+                alert('❌ لم يتم إعداد اللعبة!');
+                window.location.href = 'setup.html';
+                return;
+            }
+
+            gameData = JSON.parse(savedConfig);
+            console.log('✅ بيانات اللعبة محملة:', gameData);
+
+            // عرض المعلومات
+            displayGameInfo();
+
+            // تحضير الأسئلة
+            prepareQuestions();
+
+            // بدء اللعبة
+            startGame();
+        };
+
+        // ========== عرض معلومات اللعبة ==========
+        function displayGameInfo() {
+            document.getElementById('roomNameDisplay').textContent = gameData.roomName || 'غرفة المنافسة';
+            document.getElementById('roomCodeDisplay').textContent = gameData.roomCode;
+
+            // الفريق الأول
+            document.getElementById('team1Name').textContent = gameData.team1.name;
+            document.getElementById('team1Score').textContent = gameData.team1.score || 0;
+            document.getElementById('team1Points').textContent = gameData.team1.score || 0;
+
+            const team1PlayersList = document.getElementById('team1PlayersList');
+            team1PlayersList.innerHTML = '';
+            gameData.team1.players.forEach((player, index) => {
+                const playerTag = document.createElement('div');
+                playerTag.className = 'player-tag';
+                playerTag.textContent = player;
+                playerTag.id = `team1-player-${index}`;
+                team1PlayersList.appendChild(playerTag);
+            });
+
+            // الفريق الثاني
+            document.getElementById('team2Name').textContent = gameData.team2.name;
+            document.getElementById('team2Score').textContent = gameData.team2.score || 0;
+            document.getElementById('team2Points').textContent = gameData.team2.score || 0;
+
+            const team2PlayersList = document.getElementById('team2PlayersList');
+            team2PlayersList.innerHTML = '';
+            gameData.team2.players.forEach((player, index) => {
+                const playerTag = document.createElement('div');
+                playerTag.className = 'player-tag';
+                playerTag.textContent = player;
+                playerTag.id = `team2-player-${index}`;
+                team2PlayersList.appendChild(playerTag);
+            });
+            
+            // تحديث شارة الفريق الحالي
+            document.getElementById('currentTeamBadge').textContent = gameData[currentTurn].name;
+        }
+
+        // ========== تحضير الأسئلة ==========
+        function prepareQuestions() {
+            gameQuestions = [];
+
+            // إذا اختر "الكل"، اجمع كل الأسئلة
+            if (gameData.selectedCategories.includes('all')) {
+                for (const category in allQuestions) {
+                    gameQuestions = gameQuestions.concat(allQuestions[category]);
+                }
+            } else {
+                // اجمع الأسئلة من الأقسام المختارة فقط
+                gameData.selectedCategories.forEach(category => {
+                    if (allQuestions[category]) {
+                        gameQuestions = gameQuestions.concat(allQuestions[category]);
+                    }
+                });
+            }
+
+            // خلط الأسئلة
+            gameQuestions = shuffleArray(gameQuestions);
+
+            // تحديد عدد الأسئلة المطلوب
+            const count = Math.min(gameData.questionCount, gameQuestions.length);
+            gameQuestions = gameQuestions.slice(0, count);
+            
+            // إذا لم يكن هناك أسئلة كافية
+            if (gameQuestions.length === 0) {
+                alert('❌ لا توجد أسئلة في الأقسام المحددة!');
+                window.location.href = 'setup.html';
+                return;
+            }
+
+            console.log('✅ الأسئلة المحضرة:', gameQuestions.length, 'سؤال');
+        }
+
+        // ========== دالة خلط المصفوفة ==========
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // ========== بدء اللعبة ==========
+        function startGame() {
+            // تعيين الوقت من الإعدادات
+            timeLeft = gameData.questionTime;
+            document.getElementById('timerDisplay').textContent = timeLeft;
+
+            // تحديث معلومات السؤال
+            document.getElementById('totalQuestions').textContent = gameQuestions.length;
+
+            // بدء الدور الأول
+            startTurn();
+        }
+
+        // ========== بدء دور الفريق ==========
+        function startTurn() {
+            answered = false;
+            
+            // تحديث شارة الفريق الحالي
+            document.getElementById('currentTeamBadge').textContent = gameData[currentTurn].name;
+            document.getElementById('currentTeamBadge').style.color = currentTurn === 'team1' ? '#4285F4' : '#EA4335';
+            
+            // تحديد الفريق الحالي
+            const currentTeam = gameData[currentTurn];
+            
+            // تحديد اللاعب الحالي (التناوب بين اللاعبين)
+            if (currentPlayerIndex >= currentTeam.players.length) {
+                currentPlayerIndex = 0;
+            }
+            
+            const currentPlayer = currentTeam.players[currentPlayerIndex];
+
+            // عرض المعلومات
+            document.getElementById('currentTeamName').textContent = currentTeam.name;
+            document.getElementById('currentTeamName').style.color = currentTurn === 'team1' ? '#4285F4' : '#EA4335';
+            document.getElementById('currentPlayerName').textContent = currentPlayer;
+
+            // تحديث تظليل اللاعب الحالي
+            highlightCurrentPlayer();
+            
+            // تحميل السؤال
+            loadQuestion();
+
+            // بدء المؤقت
+            startTimer();
+            
+            // إعادة تعيين الأزرار
+            document.getElementById('nextTurnBtn').style.display = 'none';
+            document.getElementById('skipBtn').style.display = 'block';
+            
+            console.log(`🎮 دور: ${currentTeam.name} - اللاعب: ${currentPlayer}`);
+        }
+
+        // ========== تظليل اللاعب الحالي ==========
+        function highlightCurrentPlayer() {
+            // إزالة التظليل السابق من جميع اللاعبين
+            document.querySelectorAll('.player-tag').forEach(tag => {
+                tag.classList.remove('current-player-tag');
+            });
+            
+            // تظليل اللاعب الحالي
+            const currentPlayerTag = document.getElementById(`${currentTurn}-player-${currentPlayerIndex}`);
+            if (currentPlayerTag) {
+                currentPlayerTag.classList.add('current-player-tag');
+            }
+        }
+
+        // ========== تحميل السؤال ==========
+        function loadQuestion() {
+            if (currentQuestionIndex >= gameQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const question = gameQuestions[currentQuestionIndex];
+
+            document.getElementById('questionNumber').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('questionCategory').textContent = question.category;
+            document.getElementById('questionPoints').textContent = question.points;
+
+            // عرض الخيارات
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`option${i}`);
+                btn.textContent = question.options[i - 1];
+                btn.className = 'option-btn';
+                btn.disabled = false;
+            }
+        }
+
+        // ========== بدء المؤقت ==========
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = gameData.questionTime;
+            document.getElementById('timerDisplay').textContent = timeLeft;
+            document.getElementById('timerDisplay').style.color = '#ffd700';
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0 && !answered) {
+                    timeLeft--;
+                    document.getElementById('timerDisplay').textContent = timeLeft;
+                    
+                    // تغيير لون المؤقت عندما يقل الوقت
+                    if (timeLeft <= 10) {
+                        document.getElementById('timerDisplay').style.color = '#F44336';
+                    } else if (timeLeft <= 20) {
+                        document.getElementById('timerDisplay').style.color = '#FF9800';
+                    }
+                } else if (timeLeft === 0 && !answered) {
+                    clearInterval(timerInterval);
+                    // الوقت انتهى بدون إجابة
+                    skipQuestion();
+                }
+            }, 1000);
+        }
+
+        // ========== إرسال الإجابة ==========
+        function submitAnswer(selected) {
+            if (answered) return;
+            
+            answered = true;
+            clearInterval(timerInterval);
+            
+            const question = gameQuestions[currentQuestionIndex];
+            const correct = question.correct;
+            
+            // عرض الإجابة الصحيحة والخاطئة
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`option${i}`);
+                btn.disabled = true;
+                
+                if (i === correct) {
+                    btn.classList.add('correct');
+                } else if (i === selected) {
+                    btn.classList.add('wrong');
+                }
+            }
+            
+            // تحديث النقاط
+            if (selected === correct) {
+                const points = question.points;
+                gameData[currentTurn].score += points;
+                
+                // تحديث العرض
+                document.getElementById(`${currentTurn}Score`).textContent = gameData[currentTurn].score;
+                document.getElementById(`${currentTurn}Points`).textContent = gameData[currentTurn].score;
+                
+                // تأثير للإجابة الصحيحة
+                document.getElementById(`option${correct}`).style.animation = 'celebrate 0.5s 3';
+                
+                console.log(`✅ إجابة صحيحة! +${points} نقطة للفريق ${gameData[currentTurn].name}`);
+            } else {
+                console.log(`❌ إجابة خاطئة! الفريق ${gameData[currentTurn].name}`);
+            }
+            
+            // الانتقال للاعب التالي في الفريق
+            currentPlayerIndex++;
+            
+            // عرض زر التبديل
+            document.getElementById('nextTurnBtn').style.display = 'block';
+            document.getElementById('skipBtn').style.display = 'none';
+        }
+
+        // ========== تخطي السؤال ==========
+        function skipQuestion() {
+            if (answered) return;
+            
+            answered = true;
+            clearInterval(timerInterval);
+            
+            const question = gameQuestions[currentQuestionIndex];
+            const correct = question.correct;
+            
+            // عرض الإجابة الصحيحة فقط
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`option${i}`);
+                btn.disabled = true;
+                
+                if (i === correct) {
+                    btn.classList.add('correct');
+                }
+            }
+            
+            console.log(`⏭️ تم تخطي السؤال`);
+            
+            // الانتقال للاعب التالي
+            currentPlayerIndex++;
+            
+            // عرض زر التبديل
+            document.getElementById('nextTurnBtn').style.display = 'block';
+            document.getElementById('skipBtn').style.display = 'none';
+        }
+
+        // ========== التبديل للفريق الآخر ==========
+        function nextTurn() {
+            // الانتقال للفريق الآخر
+            currentTurn = currentTurn === 'team1' ? 'team2' : 'team1';
+            
+            // الانتقال للسؤال التالي
+            currentQuestionIndex++;
+            
+            // إذا انتهت الأسئلة
+            if (currentQuestionIndex >= gameQuestions.length) {
+                endGame();
+                return;
+            }
+            
+            // بدء دور الفريق الجديد
+            startTurn();
+        }
+
+        // ========== إنهاء اللعبة ==========
+        function endGame() {
+            clearInterval(timerInterval);
+            
+            // تحديد الفائز
+            const team1Score = gameData.team1.score;
+            const team2Score = gameData.team2.score;
+            
+            // عرض النتائج
+            showResults(team1Score, team2Score);
+        }
+
+        // ========== عرض النتائج ==========
+        function showResults(team1Score, team2Score) {
+            document.getElementById('team1ResultName').textContent = gameData.team1.name;
+            document.getElementById('team2ResultName').textContent = gameData.team2.name;
+            document.getElementById('team1FinalScore').textContent = team1Score;
+            document.getElementById('team2FinalScore').textContent = team2Score;
+            
+            let winnerMessage = '';
+            let winnerTeam = '';
+            
+            if (team1Score > team2Score) {
+                winnerMessage = `🎉 فاز فريق ${gameData.team1.name} بالمنافسة!`;
+                winnerTeam = gameData.team1.name;
+                document.getElementById('winnerIcon').innerHTML = '<i class="fas fa-crown"></i>';
+                document.getElementById('winnerIcon').style.color = '#4285F4';
+            } else if (team2Score > team1Score) {
+                winnerMessage = `🎉 فاز فريق ${gameData.team2.name} بالمنافسة!`;
+                winnerTeam = gameData.team2.name;
+                document.getElementById('winnerIcon').innerHTML = '<i class="fas fa-crown"></i>';
+                document.getElementById('winnerIcon').style.color = '#EA4335';
+            } else {
+                winnerMessage = '🤝 التعادل بين الفريقين!';
+                winnerTeam = 'التعادل!';
+                document.getElementById('winnerIcon').innerHTML = '<i class="fas fa-handshake"></i>';
+                document.getElementById('winnerIcon').style.color = '#ffd700';
+            }
+            
+            document.getElementById('winnerTitle').textContent = winnerMessage;
+            document.getElementById('winnerTeam').textContent = winnerTeam;
+            
+            document.getElementById('resultOverlay').style.display = 'flex';
+        }
+
+        // ========== منافسة جديدة ==========
+        function playAgain() {
+            // الانتقال لإعدادات جديدة
+            window.location.href = 'setup.html';
+        }
+
+        // ========== العودة للرئيسية ==========
+        function goToHome() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

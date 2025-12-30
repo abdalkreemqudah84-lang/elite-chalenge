@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 تحدي النخبة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* إضافات خاصة للصفحة الرئيسية */
+        .category-badge {
+            background: rgba(255,215,0,0.2);
+            color: #ffd700;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .category-card {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+        
+        .all-categories-btn {
+            margin-top: 30px;
+            background: rgba(255,215,0,0.1);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .all-categories-btn:hover {
+            background: rgba(255,215,0,0.2);
+            transform: translateY(-3px);
+        }
+        
+        .categories-count {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .admin-login-btn {
+            background: transparent;
+            color: #bbbbbb;
+            border: 1px solid #666;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .admin-login-btn:hover {
+            background: rgba(255,215,0,0.1);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, #ff6b00, #ffd700);
+            color: #1a237e;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- شريط التنقل -->
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-crown"></i>
+                <span>تحدي النخبة</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active"><i class="fas fa-home"></i> الرئيسية</a>
+                <a href="setup.html"><i class="fas fa-users"></i> فريقين</a>
+                <a href="subscribe.html"><i class="fas fa-crown"></i> اشترك</a>
+            </div>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <div class="hero">
+                <h1><i class="fas fa-trophy"></i> تحدي النخبة</h1>
+                <p class="subtitle">اختبر ثقافتك في <span class="categories-count">12</span> مجال مختلف!</p>
+                <p class="description">سجل دخول مجاناً وتمتع بتجربة كاملة مع أكثر من <strong>70 سؤال</strong> متنوع!</p>
+
+                <!-- الإحصائيات -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>70+</h3>
+                        <p>سؤال متنوع</p>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <h3>12</h3>
+                        <p>قسم مختلف</p>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-gamepad"></i>
+                        <h3>2</h3>
+                        <p>وضع للعب</p>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-award"></i>
+                        <h3>500+</h3>
+                        <p>لاعب نشط</p>
+                    </div>
+                </div>
+
+                <!-- الأزرار الرئيسية -->
+                <div class="buttons">
+                    <button class="btn-primary" onclick="startSinglePlayer()">
+                        <i class="fas fa-user"></i> العب لوحدك
+                    </button>
+                    <button class="btn-secondary" onclick="startMultiPlayer()">
+                        <i class="fas fa-users"></i> العب مع فريق
+                    </button>
+                </div>
+
+                <!-- نموذج تسجيل الدخول -->
+                <div class="login-box" id="loginSection">
+                    <h3><i class="fas fa-user"></i> ابدأ مجاناً الآن</h3>
+                    <input type="text" id="playerName" placeholder="أدخل اسمك" required>
+                    <button class="btn-primary" onclick="login()" style="width: 100%; margin-top: 15px;">
+                        <i class="fas fa-sign-in-alt"></i> سجل دخول وابدأ
+                    </button>
+                    
+                    <!-- زر دخول المشرف -->
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="admin-login-btn" onclick="showAdminLogin()">
+                            <i class="fas fa-user-shield"></i> دخول المشرف
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الأقسام -->
+            <div class="categories">
+                <h2><i class="fas fa-th-large"></i> الأقسام المتاحة <span class="categories-count">(12 قسم)</span></h2>
+                <p class="description">اختر القسم الذي تريده أو العب بكل الأقسام معاً!</p>
+                
+                <div class="category-grid">
+                    <!-- كرة القدم -->
+                    <div class="category-card" onclick="selectCategory('football')">
+                        <i class="fas fa-futbol"></i>
+                        <h3>كرة القدم</h3>
+                        <p>أسئلة عن البطولات واللاعبين والأندية العالمية والعربية</p>
+                        <div class="category-badge">5 أسئلة</div>
+                    </div>
+                    
+                    <!-- الأفلام -->
+                    <div class="category-card" onclick="selectCategory('movies')">
+                        <i class="fas fa-film"></i>
+                        <h3>الأفلام</h3>
+                        <p>أسئلة عن السينما العالمية والعربية والأفلام التاريخية</p>
+                        <div class="category-badge">3 أسئلة</div>
+                    </div>
+                    
+                    <!-- الموسيقى -->
+                    <div class="category-card" onclick="selectCategory('music')">
+                        <i class="fas fa-music"></i>
+                        <h3>الموسيقى</h3>
+                        <p>أسئلة عن المطربين والأغاني والمواويل والأنغام</p>
+                        <div class="category-badge">2 أسئلة</div>
+                    </div>
+                    
+                    <!-- الإسلاميات -->
+                    <div class="category-card" onclick="selectCategory('islamic')">
+                        <i class="fas fa-mosque"></i>
+                        <h3>الإسلاميات</h3>
+                        <p>أسئلة عن القرآن والسنة والصحابة والتاريخ الإسلامي</p>
+                        <div class="category-badge">3 أسئلة</div>
+                    </div>
+                    
+                    <!-- البراندات -->
+                    <div class="category-card" onclick="selectCategory('brands')">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h3>البراندات</h3>
+                        <p>أسئلة عن العلامات التجارية العالمية والشركات الكبرى</p>
+                        <div class="category-badge">2 أسئلة</div>
+                    </div>
+                    
+                    <!-- الثقافة العامة -->
+                    <div class="category-card" onclick="selectCategory('general')">
+                        <i class="fas fa-globe-asia"></i>
+                        <h3>ثقافة عامة</h3>
+                        <p>أسئلة متنوعة في الجغرافيا والتاريخ والعلوم والفنون</p>
+                        <div class="category-badge">5 أسئلة</div>
+                    </div>
+                    
+                    <!-- التاريخ -->
+                    <div class="category-card" onclick="selectCategory('history')">
+                        <i class="fas fa-landmark"></i>
+                        <h3>التاريخ</h3>
+                        <p>أسئلة عن الحضارات والأحداث التاريخية والعصور القديمة</p>
+                        <div class="category-badge">10 أسئلة</div>
+                    </div>
+                    
+                    <!-- العلوم -->
+                    <div class="category-card" onclick="selectCategory('science')">
+                        <i class="fas fa-flask"></i>
+                        <h3>العلوم</h3>
+                        <p>أسئلة عن الكيمياء، الفيزياء، الأحياء، والاكتشافات العلمية</p>
+                        <div class="category-badge">10 أسئلة</div>
+                    </div>
+                    
+                    <!-- الجغرافيا -->
+                    <div class="category-card" onclick="selectCategory('geography')">
+                        <i class="fas fa-globe"></i>
+                        <h3>الجغرافيا</h3>
+                        <p>أسئلة عن الدول، العواصم، الجبال، الأنهار، والبحار</p>
+                        <div class="category-badge">10 أسئلة</div>
+                    </div>
+                    
+                    <!-- الرياضيات -->
+                    <div class="category-card" onclick="selectCategory('math')">
+                        <i class="fas fa-calculator"></i>
+                        <h3>الرياضيات</h3>
+                        <p>أسئلة عن الأرقام، العمليات الحسابية، والمسائل الرياضية</p>
+                        <div class="category-badge">10 أسئلة</div>
+                    </div>
+                    
+                    <!-- الفنون -->
+                    <div class="category-card" onclick="selectCategory('arts')">
+                        <i class="fas fa-palette"></i>
+                        <h3>الفنون</h3>
+                        <p>أسئلة عن الرسم، النحت، الموسيقى الكلاسيكية، والمسارح</p>
+                        <div class="category-badge">10 أسئلة</div>
+                    </div>
+                </div>
+                
+                <!-- زر اللعب بكل الأقسام -->
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="all-categories-btn" onclick="startAllCategories()">
+                        <i class="fas fa-star"></i> العب بكل الأقسام (70 سؤال)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- التذييل -->
+        <footer>
+            <p>صنع بكل <i class="fas fa-heart"></i> من فريق تحدي النخبة</p>
+            <p>© 2025 جميع الحقوق محفوظة</p>
+        </footer>
+    </div>
+
+    <!-- نافذة دخول المشرف -->
+    <div id="adminModal" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    ">
+        <div style="
+            background: linear-gradient(135deg, #1a237e, #311b92);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 3px solid #ffd700;
+        ">
+            <h2 style="color: #ffd700;"><i class="fas fa-user-shield"></i> دخول المشرف</h2>
+            <input type="password" id="adminPassword" placeholder="كود المشرف" style="
+                width: 100%;
+                padding: 15px;
+                margin: 20px 0;
+                border: 2px solid #ffd700;
+                border-radius: 10px;
+                background: rgba(255,255,255,0.1);
+                color: white;
+                font-size: 18px;
+                text-align: center;
+            ">
+            <div style="margin-top: 20px;">
+                <button onclick="loginAsAdmin()" style="
+                    background: linear-gradient(135deg, #ffd700, #ff6b00);
+                    color: #1a237e;
+                    border: none;
+                    padding: 15px 30px;
+                    border-radius: 50px;
+                    font-size: 18px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    margin-right: 10px;
+                ">
+                    <i class="fas fa-sign-in-alt"></i> دخول
+                </button>
+                <button onclick="hideAdminModal()" style="
+                    background: transparent;
+                    color: white;
+                    border: 2px solid #ffd700;
+                    padding: 15px 30px;
+                    border-radius: 50px;
+                    font-size: 18px;
+                    cursor: pointer;
+                    font-weight: bold;
+                ">
+                    <i class="fas fa-times"></i> إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== دوال المستخدم العادي ==========
+        
+        // دالة تسجيل الدخول
+        function login() {
+            const playerName = document.getElementById('playerName').value.trim();
+
+            if (!playerName) {
+                alert('❌ يرجى إدخال اسمك!');
+                return;
+            }
+
+            // حفظ اسم اللاعب
+            localStorage.setItem('playerName', playerName);
+            localStorage.setItem('trialUsed', 'false');
+
+            // عرض رسالة نجاح
+            alert(`🎉 مرحباً ${playerName}! تم تسجيل دخولك بنجاح`);
+            
+            // تحديث الواجهة
+            updateLoginSection();
+        }
+
+        // تحديث قسم تسجيل الدخول
+        function updateLoginSection() {
+            const playerName = localStorage.getItem('playerName');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const isSubscribed = localStorage.getItem('subscribed') === 'true';
+            const trialUsed = localStorage.getItem('trialUsed') === 'true';
+            
+            let message = '';
+            let badge = '';
+            
+            if (isAdmin) {
+                message = `<i class="fas fa-user-shield"></i> مرحباً ${playerName}!`;
+                badge = '<span class="admin-badge">المشرف</span>';
+            } else if (isSubscribed) {
+                message = `<i class="fas fa-crown"></i> مرحباً ${playerName}!`;
+                badge = '<span class="admin-badge" style="background: #4CAF50;">العضوية</span>';
+            } else if (trialUsed) {
+                message = `<i class="fas fa-user"></i> مرحباً ${playerName}!`;
+                badge = '<span class="admin-badge" style="background: #F44336;">تجربة منتهية</span>';
+            } else {
+                message = `<i class="fas fa-user"></i> مرحباً ${playerName}!`;
+                badge = '<span class="admin-badge" style="background: #2196F3;">تجربة مجانية</span>';
+            }
+            
+            let buttons = '';
+            if (isAdmin) {
+                buttons = `
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <button class="btn-primary" onclick="startSinglePlayer()" style="flex: 1;">
+                            <i class="fas fa-user"></i> لوحدك
+                        </button>
+                        <button class="btn-secondary" onclick="startMultiPlayer()" style="flex: 1;">
+                            <i class="fas fa-users"></i> مع فريق
+                        </button>
+                        <button class="btn-secondary" onclick="goToAdminPanel()" style="flex: 1; background: #4CAF50;">
+                            <i class="fas fa-cog"></i> لوحة التحكم
+                        </button>
+                    </div>
+                `;
+            } else {
+                buttons = `
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <button class="btn-primary" onclick="startSinglePlayer()" style="flex: 1;">
+                            <i class="fas fa-user"></i> لوحدك
+                        </button>
+                        <button class="btn-secondary" onclick="startMultiPlayer()" style="flex: 1;">
+                            <i class="fas fa-users"></i> مع فريق
+                        </button>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('loginSection').innerHTML = `
+                <h3 style="color: #ffd700;">${message} ${badge}</h3>
+                <p style="color: #bbbbff;">اختر طريقة اللعب:</p>
+                ${buttons}
+                <p style="color: #bbbbbb; margin-top: 15px; font-size: 14px;">
+                    <i class="fas fa-info-circle"></i> أو اختر قسم محدد من الأسفل
+                </p>
+                ${!isAdmin ? `<div style="margin-top: 15px; text-align: center;">
+                    <button class="admin-login-btn" onclick="showAdminLogin()">
+                        <i class="fas fa-user-shield"></i> دخول المشرف
+                    </button>
+                </div>` : ''}
+            `;
+        }
+
+        // اختيار قسم معين
+        function selectCategory(category) {
+            const playerName = localStorage.getItem('playerName');
+            
+            if (!playerName) {
+                alert('❗ يرجى تسجيل الدخول أولاً!');
+                return;
+            }
+
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const trialUsed = localStorage.getItem('trialUsed') === 'true';
+            const isSubscribed = localStorage.getItem('subscribed') === 'true';
+
+            if (!isAdmin && !isSubscribed && trialUsed === 'true') {
+                if (!confirm('⚠️ لقد استخدمت تجربتك المجانية! هل تريد الاشتراك الآن؟')) {
+                    return;
+                }
+                window.location.href = 'subscribe.html';
+                return;
+            }
+
+            // حفظ القسم المختار
+            localStorage.setItem('selectedCategory', category);
+            
+            // الانتقال للعبة
+            window.location.href = 'game.html';
+        }
+
+        // اللعب بكل الأقسام
+        function startAllCategories() {
+            const playerName = localStorage.getItem('playerName');
+            
+            if (!playerName) {
+                alert('❗ يرجى تسجيل الدخول أولاً!');
+                return;
+            }
+
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const trialUsed = localStorage.getItem('trialUsed') === 'true';
+            const isSubscribed = localStorage.getItem('subscribed') === 'true';
+
+            if (!isAdmin && !isSubscribed && trialUsed === 'true') {
+                if (!confirm('⚠️ لقد استخدمت تجربتك المجانية! هل تريد الاشتراك الآن؟')) {
+                    return;
+                }
+                window.location.href = 'subscribe.html';
+                return;
+            }
+
+            // اختيار كل الأقسام
+            localStorage.setItem('selectedCategory', 'all');
+            
+            // الانتقال للعبة
+            window.location.href = 'game.html';
+        }
+
+        // بدء اللعبة الفردية
+        function startSinglePlayer() {
+            const playerName = localStorage.getItem('playerName');
+            
+            if (!playerName) {
+                alert('❗ يرجى تسجيل الدخول أولاً!');
+                return;
+            }
+
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const trialUsed = localStorage.getItem('trialUsed') === 'true';
+            const isSubscribed = localStorage.getItem('subscribed') === 'true';
+
+            if (!isAdmin && !isSubscribed && trialUsed === 'true') {
+                if (!confirm('⚠️ لقد استخدمت تجربتك المجانية! هل تريد الاشتراك الآن؟')) {
+                    return;
+                }
+                window.location.href = 'subscribe.html';
+                return;
+            }
+
+            // الانتقال للعبة
+            window.location.href = 'game.html';
+        }
+
+        // بدء اللعبة الجماعية
+        function startMultiPlayer() {
+            const playerName = localStorage.getItem('playerName');
+            
+            if (!playerName) {
+                alert('❗ يرجى تسجيل الدخول أولاً!');
+                return;
+            }
+
+            window.location.href = 'setup.html';
+        }
+
+        // ========== دوال المشرف ==========
+        
+        function showAdminLogin() {
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function hideAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        function loginAsAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            
+            // كود المشرف (يمكنك تغييره)
+            const adminCode = 'Abdulkareem2002'; // غير هذا الكود لشيء تفضله
+            
+            if (password === adminCode) {
+                // حفظ حالة المشرف
+                localStorage.setItem('isAdmin', 'true');
+                localStorage.setItem('playerName', 'المشرف');
+                localStorage.setItem('subscribed', 'true');
+                localStorage.setItem('trialUsed', 'false');
+                
+                hideAdminModal();
+                alert('🎉 مرحباً بالمشرف! تم تفعيل وضع المشرف.');
+                
+                // تحديث الواجهة
+                updateLoginSection();
+            } else {
+                alert('❌ كود المشرف غير صحيح!');
+            }
+        }
+
+        function goToAdminPanel() {
+            window.location.href = 'admin.html';
+        }
+
+        // عند تحميل الصفحة، عرض اسم اللاعب إذا كان مسجلاً
+        window.onload = function() {
+            const playerName = localStorage.getItem('playerName');
+            if (playerName) {
+                updateLoginSection();
+            }
+            
+            // إخفاء نافذة المشرف إذا كانت مفتوحة
+            hideAdminModal();
+        };
+    </script>
+</body>
+</html>
