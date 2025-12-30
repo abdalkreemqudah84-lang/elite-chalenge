@@ -828,28 +828,26 @@
 <body>
     <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <i class="fas fa-crown"></i>
-                <span>تحدي النخبة</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link active">
-                    <i class="fas fa-home"></i> الرئيسية
-                </a>
-                <a href="game.html" class="nav-link">
-                    <i class="fas fa-gamepad"></i> اللعبة
-                </a>
-                <a href="setup.html" class="nav-link">
-                    <i class="fas fa-cog"></i> الإعدادات
-                </a>
-                <a href="admin.html" class="nav-link">
-                    <i class="fas fa-user-shield"></i> لوحة التحكم
-                </a>
-                <a href="add-questions.html" class="nav-link">
-                    <i class="fas fa-plus-circle"></i> إضافة أسئلة
-                </a>
-            </div>
+        <div class="nav-links">
+    <a href="index.html" class="nav-link active">
+        <i class="fas fa-home"></i> الرئيسية
+    </a>
+    <a href="game.html" class="nav-link">
+        <i class="fas fa-gamepad"></i> اللعبة الفردية
+    </a>
+    <a href="team-game.html" class="nav-link">
+        <i class="fas fa-users"></i> اللعبة الجماعية
+    </a>
+    <a href="challenges.html" class="nav-link">
+        <i class="fas fa-trophy"></i> التحديات
+    </a>
+    <a href="leaderboard.html" class="nav-link">
+        <i class="fas fa-chart-line"></i> المتصدرين
+    </a>
+    <a href="admin.html" class="nav-link">
+        <i class="fas fa-user-shield"></i> التحكم
+    </a>
+</div>
         </div>
     </nav>
 
@@ -1020,7 +1018,119 @@
             </div>
         </section>
     </div>
+<!-- ===== FEATURED GAMES ===== -->
+<section class="featured-section">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-gamepad"></i> أنظمة اللعب
+        </h2>
+        <p class="section-subtitle">
+            اختر نمط اللعب الذي يناسبك
+        </p>
+        
+        <div class="games-grid">
+            <!-- اللعبة الفردية -->
+            <div class="game-card">
+                <div class="game-icon" style="background: linear-gradient(45deg, #00d4ff, #0099ff);">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>اللعبة الفردية</h3>
+                <p>تحدٍ معرفي شخصي مع نظام نقاط متقدم</p>
+                <div class="game-stats">
+                    <div class="stat">
+                        <i class="fas fa-coins"></i>
+                        <span>نظام نقاط</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>مستويات</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-trophy"></i>
+                        <span>إنجازات</span>
+                    </div>
+                </div>
+                <a href="game.html" class="btn btn-primary">
+                    <i class="fas fa-play"></i> ابدأ اللعب
+                </a>
+            </div>
+            
+            <!-- اللعبة الجماعية -->
+            <div class="game-card">
+                <div class="game-icon" style="background: linear-gradient(45deg, #ff4757, #ff6b6b);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>اللعبة الجماعية</h3>
+                <p>تحدي الأصدقاء في معركة معرفية مشتعلة</p>
+                <div class="game-stats">
+                    <div class="stat">
+                        <i class="fas fa-user-friends"></i>
+                        <span>فريقان</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-stopwatch"></i>
+                        <span>تايمر</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-chess-board"></i>
+                        <span>منافسة</span>
+                    </div>
+                </div>
+                <a href="team-game.html" class="btn btn-primary">
+                    <i class="fas fa-users"></i> شكل فريقك
+                </a>
+            </div>
+            
+            <!-- التحديات -->
+            <div class="game-card">
+                <div class="game-icon" style="background: linear-gradient(45deg, #2ed573, #00d4ff);">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>التحديات</h3>
+                <p>أكمل المهام اليومية والأسبوعية للمكافآت</p>
+                <div class="game-stats">
+                    <div class="stat">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>يومية</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>أسبوعية</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-award"></i>
+                        <span>مكافآت</span>
+                    </div>
+                </div>
+                <a href="challenges.html" class="btn btn-primary">
+                    <i class="fas fa-trophy"></i> استعرض التحديات
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
+<!-- ===== LEADERBOARD PREVIEW ===== -->
+<section class="leaderboard-preview">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-crown"></i> المتصدرين
+        </h2>
+        <p class="section-subtitle">
+            أفضل 5 لاعبين هذا الأسبوع
+        </p>
+        
+        <div class="mini-leaderboard" id="miniLeaderboard">
+            <!-- سيتم ملؤه بالجافاسكريبت -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="leaderboard.html" class="btn btn-secondary">
+                <i class="fas fa-chart-line"></i> عرض كل المتصدرين
+            </a>
+        </div>
+    </div>
+</section>
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="footer-content">
@@ -1552,5 +1662,57 @@
             }, 1500);
         }
     </script>
+    <script>
+// عرض المتصدرين المصغر في الصفحة الرئيسية
+function loadMiniLeaderboard() {
+    const miniLeaderboard = document.getElementById('miniLeaderboard');
+    
+    if (!miniLeaderboard) return; // إذا العنصر غير موجود
+    
+    // بيانات تجريبية
+    const topPlayers = [
+        { rank: 1, name: "أحمد محمد", level: "الأسطورة", points: "45,680" },
+        { rank: 2, name: "سارة خالد", level: "الخبير", points: "38,950" },
+        { rank: 3, name: "محمد علي", level: "الخبير", points: "32,450" },
+        { rank: 4, name: "فاطمة حسن", level: "المتقدم", points: "28,700" },
+        { rank: 5, name: "خالد أحمد", level: "المتقدم", points: "24,500" }
+    ];
+    
+    miniLeaderboard.innerHTML = '';
+    
+    topPlayers.forEach(player => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        item.innerHTML = `
+            <div class="leaderboard-rank rank-${player.rank}">
+                ${player.rank}
+            </div>
+            <div class="leaderboard-player">
+                <div class="leaderboard-player-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div class="leaderboard-player-name">${player.name}</div>
+                    <div class="leaderboard-player-level">${player.level}</div>
+                </div>
+            </div>
+            <div class="leaderboard-score">
+                ${player.points}
+            </div>
+        `;
+        miniLeaderboard.appendChild(item);
+    });
+}
+
+// تهيئة الصفحة الرئيسية
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏠 الصفحة الرئيسية جاهزة');
+    
+    loadMiniLeaderboard();
+    
+    // تحديث كل 10 ثواني
+    setInterval(loadMiniLeaderboard, 10000);
+});
+</script>
 </body>
 </html>
