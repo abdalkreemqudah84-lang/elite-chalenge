@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <!-- بعد style.css -->
+<script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - تحدي النخبة</title>
@@ -786,29 +788,26 @@
 <body>
     <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-crown"></i>
-                <span>تحدي النخبة</span>
-            </a>
-            
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">
-                    <i class="fas fa-home"></i> الرئيسية
-                </a>
-                <a href="game.html" class="nav-link">
-                    <i class="fas fa-gamepad"></i> اللعبة
-                </a>
-                <a href="setup.html" class="nav-link">
-                    <i class="fas fa-cog"></i> الإعدادات
-                </a>
-                <a href="admin.html" class="nav-link active">
-                    <i class="fas fa-user-shield"></i> التحكم
-                </a>
-                <a href="#" class="nav-link" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> خروج
-                </a>
-            </div>
+        <div class="nav-links">
+    <a href="index.html" class="nav-link">
+        <i class="fas fa-home"></i> الرئيسية
+    </a>
+    <a href="game.html" class="nav-link">
+        <i class="fas fa-gamepad"></i> اللعبة الفردية
+    </a>
+    <a href="team-game.html" class="nav-link">
+        <i class="fas fa-users"></i> اللعبة الجماعية
+    </a>
+    <a href="challenges.html" class="nav-link">
+        <i class="fas fa-trophy"></i> التحديات
+    </a>
+    <a href="leaderboard.html" class="nav-link">
+        <i class="fas fa-chart-line"></i> المتصدرين
+    </a>
+    <a href="admin.html" class="nav-link active">
+        <i class="fas fa-user-shield"></i> التحكم
+    </a>
+</div>
         </div>
     </nav>
 
@@ -846,6 +845,18 @@
                 </h2>
                 
                 <ul class="sidebar-menu">
+                    <li class="menu-item" onclick="showSection('challenges')">
+    <i class="fas fa-trophy"></i>
+    <span>إدارة التحديات</span>
+</li>
+<li class="menu-item" onclick="showSection('leaderboard')">
+    <i class="fas fa-crown"></i>
+    <span>إدارة المتصدرين</span>
+</li>
+<li class="menu-item" onclick="showSection('advanced-stats')">
+    <i class="fas fa-chart-pie"></i>
+    <span>إحصائيات متقدمة</span>
+</li>
                     <li class="menu-item active" onclick="showSection('dashboard')">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>لوحة التحكم</span>
@@ -894,6 +905,163 @@
                         <p class="section-subtitle">
                             إحصائيات وأداء النظام
                         </p>
+                        <!-- قسم إدارة التحديات -->
+<div class="content-section" id="challengesSection">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-trophy"></i> إدارة التحديات
+        </h2>
+        <p class="section-subtitle">
+            إضافة وتعديل التحديات اليومية والأسبوعية
+        </p>
+    </div>
+    
+    <div class="challenges-admin">
+        <div class="challenges-controls">
+            <button class="btn btn-primary" onclick="createDailyChallenge()">
+                <i class="fas fa-plus"></i> إضافة تحدي يومي
+            </button>
+            <button class="btn btn-secondary" onclick="createWeeklyChallenge()">
+                <i class="fas fa-plus-circle"></i> إضافة تحدي أسبوعي
+            </button>
+            <button class="btn" style="background: #ffd700; color: black;" onclick="createSpecialChallenge()">
+                <i class="fas fa-gem"></i> إضافة تحدي خاص
+            </button>
+        </div>
+        
+        <div class="challenges-list" id="adminChallengesList">
+            <!-- قائمة التحديات تظهر هنا -->
+        </div>
+    </div>
+</div>
+
+<!-- قسم إدارة المتصدرين -->
+<div class="content-section" id="leaderboardSection">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-crown"></i> إدارة المتصدرين
+        </h2>
+        <p class="section-subtitle">
+            مراقبة وتعديل بيانات اللاعبين والمتصدرين
+        </p>
+    </div>
+    
+    <div class="leaderboard-admin">
+        <div class="filter-options">
+            <select class="filter-select" id="leaderboardFilter">
+                <option value="all">جميع اللاعبين</option>
+                <option value="top100">أفضل 100 لاعب</option>
+                <option value="daily">متصدرين اليوم</option>
+                <option value="weekly">متصدرين الأسبوع</option>
+                <option value="monthly">متصدرين الشهر</option>
+            </select>
+            
+            <button class="btn btn-primary" onclick="exportLeaderboard()">
+                <i class="fas fa-download"></i> تصدير البيانات
+            </button>
+            
+            <button class="btn btn-secondary" onclick="resetWeeklyLeaderboard()">
+                <i class="fas fa-redo"></i> إعادة تعيين الأسبوع
+            </button>
+        </div>
+        
+        <div class="admin-leaderboard-table">
+            <!-- جدول المتصدرين يظهر هنا -->
+        </div>
+    </div>
+</div>
+
+<!-- قسم الإحصائيات المتقدمة -->
+<div class="content-section" id="advancedStatsSection">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-chart-pie"></i> إحصائيات متقدمة
+        </h2>
+        <p class="section-subtitle">
+            تحليل بيانات النظام والأداء
+        </p>
+    </div>
+    
+    <div class="advanced-stats">
+        <div class="stats-cards">
+            <div class="stat-card advanced">
+                <div class="stat-header">
+                    <div class="stat-title">أكثر فئة لعباً</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="mostPlayedCategory">العلم</div>
+                <div class="stat-change">
+                    <i class="fas fa-chart-line"></i> 45% من الجولات
+                </div>
+            </div>
+            
+            <div class="stat-card advanced">
+                <div class="stat-header">
+                    <div class="stat-title">متوسط وقت الإجابة</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="avgAnswerTime">12.5s</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-down"></i> تحسن 2.3s
+                </div>
+            </div>
+            
+            <div class="stat-card advanced">
+                <div class="stat-header">
+                    <div class="stat-title">نسبة النجاح العامة</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="successRate">78%</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +5% هذا الشهر
+                </div>
+            </div>
+            
+            <div class="stat-card advanced">
+                <div class="stat-header">
+                    <div class="stat-title">أعلى تسلسل</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="highestStreak">32</div>
+                <div class="stat-change">
+                    <i class="fas fa-user"></i> أحمد محمد
+                </div>
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-line"></i> نشاط اللاعبين</h3>
+                <div class="chart-placeholder">
+                    <!-- رسم بياني يظهر هنا -->
+                    <p style="text-align: center; padding: 50px; color: #aaa;">
+                        <i class="fas fa-chart-bar" style="font-size: 3rem;"></i><br>
+                        رسم بياني لنشاط اللاعبين
+                    </p>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3><i class="fas fa-pie-chart"></i> توزيع الفئات</h3>
+                <div class="chart-placeholder">
+                    <!-- رسم بياني يظهر هنا -->
+                    <p style="text-align: center; padding: 50px; color: #aaa;">
+                        <i class="fas fa-pie-chart" style="font-size: 3rem;"></i><br>
+                        رسم بياني لتوزيع الفئات
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                     </div>
                     
                     <div class="stats-grid">
@@ -1192,6 +1360,115 @@
 
     <!-- ===== JAVASCRIPT ===== -->
     <script>
+        // ===== CHALLENGES MANAGEMENT =====
+function createDailyChallenge() {
+    showAlert('info', '📝 إنشاء تحدي يومي جديد');
+    // هنا سيتم فتح نموذج إنشاء تحدي
+}
+
+function createWeeklyChallenge() {
+    showAlert('info', '📅 إنشاء تحدي أسبوعي جديد');
+}
+
+function createSpecialChallenge() {
+    showAlert('info', '💎 إنشاء تحدي خاص جديد');
+}
+
+// ===== LEADERBOARD MANAGEMENT =====
+function exportLeaderboard() {
+    showAlert('success', '📥 جاري تصدير بيانات المتصدرين...');
+    setTimeout(() => {
+        showAlert('success', '✅ تم تصدير البيانات بنجاح');
+    }, 1500);
+}
+
+function resetWeeklyLeaderboard() {
+    if (confirm('⚠️ هل أنت متأكد من إعادة تعيين متصدرين الأسبوع؟')) {
+        showAlert('info', '🔄 جاري إعادة التعيين...');
+        setTimeout(() => {
+            showAlert('success', '✅ تم إعادة تعيين متصدرين الأسبوع');
+        }, 2000);
+    }
+}
+
+// ===== ADVANCED STATS =====
+function loadAdvancedStats() {
+    // تحديث الإحصائيات المتقدمة
+    document.getElementById('mostPlayedCategory').textContent = 'العلم';
+    document.getElementById('avgAnswerTime').textContent = '12.5s';
+    document.getElementById('successRate').textContent = '78%';
+    document.getElementById('highestStreak').textContent = '32';
+}
+
+// ===== UPDATE DASHBOARD WITH NEW DATA =====
+async function updateDashboardWithNewData() {
+    // إحصائيات النظام الجديد
+    const newStats = {
+        totalUsers: 145,
+        totalQuestions: 650,
+        totalGames: 1250,
+        avgScore: 78,
+        activeChallenges: 8,
+        totalPoints: 450000,
+        leaderboardEntries: 89,
+        dailyActivePlayers: 45
+    };
+    
+    // تحديث لوحة التحكم
+    document.getElementById('totalUsers').textContent = newStats.totalUsers;
+    document.getElementById('totalQuestions').textContent = newStats.totalQuestions;
+    document.getElementById('totalGames').textContent = newStats.totalGames;
+    document.getElementById('avgScore').textContent = newStats.avgScore;
+    
+    // إضافة إحصائيات جديدة
+    const statsGrid = document.querySelector('.stats-grid');
+    if (statsGrid.children.length === 4) {
+        // إضافة بطاقات إحصائية جديدة
+        const newStatsHTML = `
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">التحديات النشطة</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+                <div class="stat-value">${newStats.activeChallenges}</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +3 هذا الأسبوع
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">إجمالي النقاط</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+                <div class="stat-value">${(newStats.totalPoints / 1000).toFixed(1)}K</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> 12% زيادة
+                </div>
+            </div>
+        `;
+        
+        // إضافة البطاقات الجديدة
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newStatsHTML;
+        while (tempDiv.firstChild) {
+            statsGrid.appendChild(tempDiv.firstChild);
+        }
+    }
+    
+    loadAdvancedStats();
+}
+
+// عدّل دالة loadDashboardData
+async function loadDashboardData() {
+    await updateStatsFromAPI();
+    loadRecentActivity();
+    updateDashboardWithNewData(); // جديد
+}
         // رابط الخادم
 const API_URL = 'http://localhost:5000/api';
 

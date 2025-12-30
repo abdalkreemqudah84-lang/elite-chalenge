@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تحدي النخبة - اللعب الفردي</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- إضافة config.js هنا -->
+    <script src="config.js"></script>
     <style>
-        /* نظام سين جيم للعبة */
+        /* أنماط اللعبة تبقى كما هي */
         .s9a9im-game {
             max-width: 1000px;
             margin: 100px auto 50px;
@@ -44,7 +47,6 @@
             color: #00d4ff;
         }
         
-        /* منطقة السؤال */
         .question-container {
             background: rgba(10, 25, 47, 0.8);
             padding: 40px;
@@ -114,7 +116,6 @@
             color: #ff4757;
         }
         
-        /* التايمر */
         .timer-container {
             width: 100%;
             height: 8px;
@@ -139,7 +140,6 @@
             margin: 10px 0;
         }
         
-        /* شريط الإحصائيات */
         .stats-bar {
             display: flex;
             justify-content: space-between;
@@ -166,7 +166,6 @@
             color: #aaa;
         }
         
-        /* النتيجة */
         .result-overlay {
             position: fixed;
             top: 0;
@@ -197,7 +196,6 @@
             margin: 20px 0;
         }
         
-        /* نظام المستويات */
         .level-indicator {
             display: flex;
             align-items: center;
@@ -363,8 +361,8 @@
             
             <div style="margin: 25px 0; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
                 <h3 style="color: #00d4ff; margin-bottom: 10px;">🆕 المستوى الجديد</h3>
-                <div style="font-size: 1.5rem; color: #ffd700;" id="newLevel">مستوى 2</div>
-                <div style="color: #aaa;" id="levelReward">مكافأة: 1000 نقطة إضافية</div>
+                <div style="font-size: 1.5rem; color: #ffd700;" id="newLevel">مستوى 1</div>
+                <div style="color: #aaa;" id="levelReward">تابع اللعب للارتقاء</div>
             </div>
             
             <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
@@ -381,17 +379,34 @@
         </div>
     </div>
 
+    <!-- ===== JAVASCRIPT ===== -->
     <script>
-        // نظام اللعبة مثل سين جيم
+        // ============================================
+        // نظام اللعبة باستخدام config.js
+        // ============================================
+        
+        // التحقق من تحميل config.js
+        if (typeof APP_CONFIG === 'undefined') {
+            console.error('❌ ملف config.js غير محمل!');
+            alert('خطأ في تحميل الإعدادات. تأكد من وجود ملف config.js');
+        } else {
+            console.log('✅ config.js محمل:', APP_CONFIG.APP_NAME, APP_CONFIG.VERSION);
+        }
+        
         class EliteChallengeGame {
             constructor() {
+                // استخدام الإعدادات من config.js
+                this.gameModes = APP_CONFIG.GAME_MODES;
+                this.scoringSystem = APP_CONFIG.SCORING_SYSTEM;
+                this.levels = APP_CONFIG.LEVELS;
+                this.categories = APP_CONFIG.CATEGORIES;
+                
                 this.gameMode = 'normal';
                 this.score = 0;
                 this.streak = 0;
                 this.multiplier = 1;
                 this.level = 1;
                 this.experience = 0;
-                this.totalQuestions = 10;
                 this.currentQuestion = 0;
                 this.correctAnswers = 0;
                 this.wrongAnswers = 0;
@@ -399,34 +414,22 @@
                 this.timeLeft = 30;
                 this.timer = null;
                 this.isGameActive = false;
+                this.questions = [];
                 
-                // إعدادات أنماط اللعب
-                this.modes = {
-                    quick: { questions: 10, time: 15, basePoints: 100 },
-                    normal: { questions: 20, time: 30, basePoints: 250 },
-                    challenge: { questions: 15, time: 20, basePoints: 500 }
-                };
+                // استخدام إعدادات النمط العادي من config.js
+                this.totalQuestions = this.gameModes.NORMAL.questions;
+                this.timePerQuestion = this.gameModes.NORMAL.time;
                 
-                // نظام المستويات
-                this.levelSystem = [
-                    { level: 1, name: "المبتدئ", requiredXP: 0, badge: "🥚", color: "#aaa" },
-                    { level: 2, name: "الهاوي", requiredXP: 1000, badge: "🐣", color: "#55efc4" },
-                    { level: 3, name: "المتوسط", requiredXP: 3000, badge: "🐥", color: "#74b9ff" },
-                    { level: 4, name: "المتقدم", requiredXP: 7000, badge: "🦅", color: "#a29bfe" },
-                    { level: 5, name: "الخبير", requiredXP: 15000, badge: "👑", color: "#ffd700" },
-                    { level: 6, name: "الأسطورة", requiredXP: 30000, badge: "⭐", color: "#ff6b81" }
-                ];
-                
-                // الأسئلة
-                this.questions = this.loadQuestions();
+                this.loadQuestions();
             }
             
             loadQuestions() {
-                return [
+                // استخدام الفئات من config.js
+                this.questions = [
                     {
                         id: 1,
                         question: "ما هو أسرع حيوان بري في العالم؟",
-                        category: "علم الحيوان",
+                        category: this.categories[0].id,
                         difficulty: "easy",
                         options: ["الفهد", "الأسد", "النمر", "الذئب"],
                         correct: 0,
@@ -435,7 +438,7 @@
                     {
                         id: 2,
                         question: "في أي عام هبط الإنسان أول مرة على القمر؟",
-                        category: "التاريخ",
+                        category: this.categories[1].id,
                         difficulty: "medium",
                         options: ["1965", "1969", "1972", "1958"],
                         correct: 1,
@@ -444,7 +447,7 @@
                     {
                         id: 3,
                         question: "ما هو العنصر الكيميائي الذي رمزه 'Au'؟",
-                        category: "الكيمياء",
+                        category: this.categories[0].id,
                         difficulty: "easy",
                         options: ["الفضة", "الذهب", "الألومنيوم", "الحديد"],
                         correct: 1,
@@ -453,7 +456,7 @@
                     {
                         id: 4,
                         question: "كم عدد لاعبي كرة القدم في كل فريق؟",
-                        category: "الرياضة",
+                        category: this.categories[3].id,
                         difficulty: "easy",
                         options: ["10", "11", "12", "9"],
                         correct: 1,
@@ -462,7 +465,7 @@
                     {
                         id: 5,
                         question: "من هو مؤلف رواية 'البؤساء'؟",
-                        category: "الأدب",
+                        category: this.categories[4].id,
                         difficulty: "hard",
                         options: ["فيكتور هوجو", "تشارلز ديكنز", "ليو تولستوي", "جي دي موباسان"],
                         correct: 0,
@@ -473,6 +476,12 @@
             
             startGame(mode) {
                 this.gameMode = mode;
+                
+                // استخدام إعدادات النمط من config.js
+                const modeConfig = this.gameModes[mode.toUpperCase()];
+                this.totalQuestions = modeConfig.questions;
+                this.timePerQuestion = modeConfig.time;
+                
                 this.resetGame();
                 this.isGameActive = true;
                 
@@ -480,12 +489,11 @@
                 document.getElementById('modeSelector').style.display = 'none';
                 document.getElementById('gameArea').style.display = 'block';
                 
-                // تعيين إعدادات النمط
-                const modeSettings = this.modes[mode];
-                this.totalQuestions = modeSettings.questions;
-                this.timeLeft = modeSettings.time;
+                // استخدام showNotification من config.js
+                if (typeof showNotification !== 'undefined') {
+                    showNotification(`بدأت اللعبة بنمط ${mode === 'quick' ? 'سريع' : mode === 'normal' ? 'عادي' : 'تحدي'}`, 'success');
+                }
                 
-                // تحديث الواجهة
                 this.updateUI();
                 this.showNextQuestion();
                 this.startTimer();
@@ -499,7 +507,7 @@
                 this.correctAnswers = 0;
                 this.wrongAnswers = 0;
                 this.timeBonus = 0;
-                this.timeLeft = this.modes[this.gameMode].time;
+                this.timeLeft = this.timePerQuestion;
             }
             
             showNextQuestion() {
@@ -518,7 +526,11 @@
                 
                 // عرض السؤال
                 document.getElementById('questionText').textContent = q.question;
-                document.getElementById('questionCategory').textContent = q.category;
+                
+                // عرض الفئة باستخدام config.js
+                const category = this.categories.find(c => c.id === q.category);
+                document.getElementById('questionCategory').textContent = category ? category.name : 'عام';
+                
                 document.getElementById('questionDifficulty').textContent = 
                     q.difficulty === 'easy' ? 'سهل' : 
                     q.difficulty === 'medium' ? 'متوسط' : 'صعب';
@@ -553,7 +565,7 @@
                     }
                 });
                 
-                // حساب النتيجة
+                // حساب النتيجة باستخدام config.js
                 if (selected === correct) {
                     this.correctAnswers++;
                     this.streak++;
@@ -563,13 +575,18 @@
                     if (this.streak >= 5) this.multiplier = 3;
                     if (this.streak >= 10) this.multiplier = 5;
                     
-                    // حساب النقاط
-                    const basePoints = this.modes[this.gameMode].basePoints;
-                    const timeBonus = Math.floor(this.timeLeft * 2);
-                    const points = (basePoints + timeBonus) * this.multiplier;
+                    // حساب النقاط باستخدام config.js
+                    const currentQuestion = this.questions.find(q => 
+                        q.question === document.getElementById('questionText').textContent
+                    );
+                    const difficulty = currentQuestion?.difficulty || 'medium';
+                    const points = this.scoringSystem.calculateScore(difficulty, this.timeLeft, this.streak);
                     
                     this.score += points;
-                    this.timeBonus += timeBonus;
+                    this.timeBonus += Math.floor(this.timeLeft * 2);
+                    
+                    // إضافة خبرة
+                    this.addExperience(points);
                     
                     // إظهار النقاط المكتسبة
                     const pointsPopup = document.createElement('div');
@@ -588,9 +605,6 @@
                         z-index: 10;
                     `;
                     buttons[correct].appendChild(pointsPopup);
-                    
-                    // إضافة خبرة
-                    this.addExperience(points);
                 } else {
                     this.wrongAnswers++;
                     this.streak = 0;
@@ -622,16 +636,51 @@
                         oldExplanation.remove();
                     }
                     
-                    this.timeLeft = this.modes[this.gameMode].time;
+                    this.timeLeft = this.timePerQuestion;
                     this.showNextQuestion();
                     this.startTimer();
                 };
             }
             
+            addExperience(points) {
+                this.experience += Math.floor(points / 10);
+                this.checkLevelUp();
+                this.updateLevelUI();
+            }
+            
+            checkLevelUp() {
+                // استخدام نظام المستويات من config.js
+                for (let i = this.levels.length - 1; i >= 0; i--) {
+                    if (this.experience >= this.levels[i].minXP) {
+                        if (this.level !== this.levels[i].level) {
+                            this.level = this.levels[i].level;
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                return false;
+            }
+            
+            updateLevelUI() {
+                const currentLevel = this.levels.find(l => l.level === this.level);
+                const nextLevel = this.levels.find(l => l.level === this.level + 1);
+                
+                if (currentLevel) {
+                    document.getElementById('playerLevel').textContent = currentLevel.name;
+                }
+                
+                if (nextLevel) {
+                    const currentLevelXP = currentLevel.minXP;
+                    const nextLevelXP = nextLevel.minXP;
+                    const progress = ((this.experience - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
+                    document.getElementById('levelProgress').style.width = `${Math.min(progress, 100)}%`;
+                }
+            }
+            
             startTimer() {
                 clearInterval(this.timer);
-                const modeTime = this.modes[this.gameMode].time;
-                this.timeLeft = modeTime;
+                this.timeLeft = this.timePerQuestion;
                 document.getElementById('timerDisplay').textContent = this.timeLeft;
                 document.getElementById('timerBar').style.width = '100%';
                 
@@ -639,7 +688,7 @@
                     this.timeLeft--;
                     document.getElementById('timerDisplay').textContent = this.timeLeft;
                     document.getElementById('timerBar').style.width = 
-                        `${(this.timeLeft / modeTime) * 100}%`;
+                        `${(this.timeLeft / this.timePerQuestion) * 100}%`;
                     
                     if (this.timeLeft <= 0) {
                         clearInterval(this.timer);
@@ -660,42 +709,6 @@
                 });
                 
                 document.getElementById('nextBtn').style.display = 'block';
-                document.getElementById('nextBtn').onclick = () => {
-                    this.timeLeft = this.modes[this.gameMode].time;
-                    this.showNextQuestion();
-                    this.startTimer();
-                };
-            }
-            
-            addExperience(points) {
-                this.experience += Math.floor(points / 10);
-                this.checkLevelUp();
-                this.updateLevelUI();
-            }
-            
-            checkLevelUp() {
-                const currentLevel = this.levelSystem[this.level - 1];
-                const nextLevel = this.levelSystem[this.level];
-                
-                if (nextLevel && this.experience >= nextLevel.requiredXP) {
-                    this.level++;
-                    return true;
-                }
-                return false;
-            }
-            
-            updateLevelUI() {
-                document.getElementById('playerLevel').textContent = this.level;
-                
-                const currentLevel = this.levelSystem[this.level - 1];
-                const nextLevel = this.levelSystem[this.level];
-                
-                if (nextLevel) {
-                    const currentLevelXP = currentLevel.requiredXP;
-                    const nextLevelXP = nextLevel.requiredXP;
-                    const progress = ((this.experience - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
-                    document.getElementById('levelProgress').style.width = `${Math.min(progress, 100)}%`;
-                }
             }
             
             updateUI() {
@@ -708,11 +721,8 @@
                 this.isGameActive = false;
                 clearInterval(this.timer);
                 
-                // حساب النتيجة النهائية
-                const finalScore = this.score;
-                
                 // تحديث واجهة النتيجة
-                document.getElementById('finalScore').textContent = finalScore.toLocaleString();
+                document.getElementById('finalScore').textContent = this.score.toLocaleString();
                 document.getElementById('correctCount').textContent = this.correctAnswers;
                 document.getElementById('wrongCount').textContent = this.wrongAnswers;
                 document.getElementById('timeBonus').textContent = this.timeBonus;
@@ -720,7 +730,7 @@
                 // مستوى جديد
                 const leveledUp = this.checkLevelUp();
                 if (leveledUp) {
-                    const newLevelData = this.levelSystem[this.level - 1];
+                    const newLevelData = this.levels.find(l => l.level === this.level);
                     document.getElementById('newLevel').textContent = `مستوى ${newLevelData.level}: ${newLevelData.name}`;
                     document.getElementById('levelReward').textContent = `مكافأة: ${newLevelData.badge} + ${1000 * newLevelData.level} نقطة`;
                 } else {
@@ -730,15 +740,23 @@
                 
                 // إظهار نافذة النتيجة
                 document.getElementById('resultOverlay').style.display = 'flex';
+                
+                // إشعار النهاية
+                if (typeof showNotification !== 'undefined') {
+                    showNotification(`🎉 انتهت الجولة! حصلت على ${this.score.toLocaleString()} نقطة`, 'success');
+                }
             }
         }
         
-        // تهيئة اللعبة
+        // ============================================
+        // الدوال العامة
+        // ============================================
+        
         let game;
         
         function initGame() {
             game = new EliteChallengeGame();
-            console.log('🎮 نظام تحدي النخبة جاهز (نمط سين جيم)');
+            console.log('🎮 نظام تحدي النخبة جاهز');
         }
         
         function startGame(mode) {
@@ -760,7 +778,7 @@
         function shareResult() {
             const score = document.getElementById('finalScore').textContent;
             const level = document.getElementById('newLevel').textContent;
-            const message = `🎮 حصلت على ${score} نقطة في تحدي النخبة ووصلت إلى ${level}! جرب اللعبة: ${window.location.origin}`;
+            const message = `🎮 حصلت على ${score} نقطة في تحدي النخبة ووصلت إلى ${level}!`;
             
             if (navigator.share) {
                 navigator.share({
@@ -770,7 +788,11 @@
                 });
             } else {
                 navigator.clipboard.writeText(message);
-                alert('✅ تم نسخ النتيجة إلى الحافظة!');
+                if (typeof showNotification !== 'undefined') {
+                    showNotification('✅ تم نسخ النتيجة إلى الحافظة!', 'success');
+                } else {
+                    alert('تم نسخ النتيجة إلى الحافظة!');
+                }
             }
         }
         
