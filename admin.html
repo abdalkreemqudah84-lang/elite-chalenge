@@ -829,6 +829,12 @@
                     <p id="adminEmail">admin@elite.com</p>
                 </div>
             </div>
+            <!-- بعد <div class="admin-info"> مباشرة -->
+<div style="margin-top: 10px;">
+    <button class="btn btn-secondary btn-small" onclick="testAPIConnection()">
+        <i class="fas fa-plug"></i> اختبار اتصال الخادم
+    </button>
+</div>
         </div>
 
         <!-- Admin Layout -->
@@ -1186,6 +1192,49 @@
 
     <!-- ===== JAVASCRIPT ===== -->
     <script>
+        // رابط الخادم
+const API_URL = 'http://localhost:5000/api';
+
+// جلب الإحصائيات من الخادم
+async function fetchStats() {
+    try {
+        const response = await fetch(`${API_URL}/stats`);
+        const data = await response.json();
+        
+        // تحديث الواجهة
+        document.getElementById('totalUsers').textContent = data.totalUsers || '0';
+        document.getElementById('totalQuestions').textContent = data.totalQuestions || '0';
+        document.getElementById('totalGames').textContent = data.totalGames || '0';
+        document.getElementById('avgScore').textContent = data.avgScore || '0';
+        
+        console.log('✅ تم تحميل الإحصائيات من الخادم');
+    } catch (error) {
+        console.log('⚠️ استخدام بيانات تجريبية');
+        // استخدم الدالة القديمة إذا الخادم مش شغال
+        updateDashboardStats();
+    }
+}
+
+// جلب الأسئلة من الخادم
+async function fetchQuestions() {
+    try {
+        const response = await fetch(`${API_URL}/questions`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            displayQuestions(data.data);
+        }
+    } catch (error) {
+        console.log('⚠️ استخدام أسئلة تجريبية');
+        loadQuestionsData();
+    }
+}
+
+// عدّل دالة loadDashboardData
+async function loadDashboardData() {
+    await fetchStats();
+    loadRecentActivity();
+}
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function() {
             console.log('👨‍💼 لوحة التحكم جاهزة');
@@ -1237,16 +1286,20 @@
         }
         
         // ===== DASHBOARD FUNCTIONS =====
-        function loadDashboardData() {
-            // تحميل الإحصائيات
-            updateDashboardStats();
-            
-            // تحميل النشاط الحديث
-            loadRecentActivity();
-        }
-        
-        function updateDashboardStats() {
-            // بيانات تجريبية
+function loadDashboardData() {
+    updateStatsFromAPI(); // جديد
+    loadRecentActivity();
+}
+
+// ===== QUESTIONS MANAGEMENT =====
+function loadQuestionsData() {
+    loadQuestionsFromAPI(); // جديد
+}
+
+// ===== USERS MANAGEMENT =====
+function loadUsersData() {
+    loadUsersFromAPI(); // جديد
+}
             const stats = {
                 totalUsers: 125,
                 usersChange: 12,
@@ -1270,7 +1323,7 @@
             
             document.getElementById('avgScore').textContent = stats.avgScore;
             document.getElementById('scoreChange').innerHTML = `<i class="fas fa-arrow-up"></i> ${stats.scoreChange}% هذا الشهر`;
-        }
+        
         
         function loadRecentActivity() {
             const activities = [
@@ -1663,6 +1716,35 @@
         
         // ===== EVENT LISTENERS =====
         function setupEventListeners() {
+            // ===== API TEST FUNCTION =====
+        async function testAPIConnection() {
+            showAlert('info', '🔌 جاري اختبار اتصال الخادم...');
+            
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                
+                showAlert('success', 
+                    `✅ الاتصال ناجح!<br>
+                     الخادم: ${data.status}<br>
+                     الوقت: ${new Date(data.timestamp).toLocaleTimeString()}`
+                );
+                
+                console.log('✅ اختبار الاتصال ناجح:', data);
+                return true;
+            } catch (error) {
+                showAlert('error', 
+                    `❌ الاتصال فاشل!<br>
+                     تأكد من:<br>
+                     1. الخادم شغال (node server.js)<br>
+                     2. الرابط: ${API_URL}<br>
+                     3. لا يوجد حظر في الجدار الناري`
+                );
+                
+                console.error('❌ اختبار الاتصال فاشل:', error);
+                return false;
+            }
+        }
             // البحث عن الأسئلة
             document.getElementById('searchQuestions').addEventListener('input', function() {
                 if (this.value.length >= 2) {
@@ -1686,5 +1768,62 @@
             });
         }
     </script>
+    // 🔗 رابط API الخاص بالخادم
+const API_URL = 'http://localhost:5000/api';
+
+// 🔄 جلب البيانات من الخادم
+async function fetchFromAPI(endpoint) {
+    try {
+        const response = await fetch(`${API_URL}/${endpoint}`);
+        return await response.json();
+    } catch (error) {
+        console.error(`❌ خطأ في جلب ${endpoint}:`, error);
+        return null;
+    }
+}
+
+// 📊 تحديث الإحصائيات من الخادم
+async function updateStatsFromAPI() {
+    const stats = await fetchFromAPI('stats');
+    
+    if (stats) {
+        document.getElementById('totalUsers').textContent = stats.totalUsers || '0';
+        document.getElementById('totalQuestions').textContent = stats.totalQuestions || '0';
+        document.getElementById('totalGames').textContent = stats.totalGames || '0';
+        document.getElementById('avgScore').textContent = stats.avgScore || '0';
+        
+        console.log('✅ تم تحديث الإحصائيات من الخادم');
+    } else {
+        console.log('⚠️ استخدام البيانات التجريبية');
+        updateDashboardStats(); // الدالة القديمة
+    }
+}
+
+// ❓ جلب الأسئلة من الخادم
+async function loadQuestionsFromAPI() {
+    const result = await fetchFromAPI('questions');
+    
+    if (result && result.success) {
+        displayQuestions(result.data);
+        document.getElementById('questionsCount').textContent = result.count;
+        console.log(`✅ تم تحميل ${result.count} سؤال من الخادم`);
+    } else {
+        console.log('⚠️ استخدام الأسئلة التجريبية');
+        loadQuestionsData(); // الدالة القديمة
+    }
+}
+
+// 👥 جلب المستخدمين من الخادم
+async function loadUsersFromAPI() {
+    const result = await fetchFromAPI('users');
+    
+    if (result && result.success) {
+        displayUsers(result.data);
+        console.log(`✅ تم تحميل ${result.count} مستخدم من الخادم`);
+    } else {
+        console.log('⚠️ استخدام المستخدمين التجريبين');
+        loadUsersData(); // الدالة القديمة
+    }
+}
 </body>
 </html>
