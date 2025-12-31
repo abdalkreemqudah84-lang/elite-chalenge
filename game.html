@@ -6,11 +6,16 @@
     <title>تحدي النخبة - اللعب الفردي</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- إضافة config.js هنا -->
-    <script src="config.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    
     <style>
-        /* أنماط اللعبة تبقى كما هي */
-        .s9a9im-game {
+        /* أنماط اللعبة */
+        .game-container {
             max-width: 1000px;
             margin: 100px auto 50px;
             padding: 0 20px;
@@ -216,6 +221,63 @@
             background: linear-gradient(90deg, #00d4ff, #0099ff);
             border-radius: 5px;
         }
+        
+        /* شارات الفئة والمستوى */
+        .category-badge, .difficulty-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .category-badge {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+        }
+        
+        .difficulty-badge {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+        
+        /* الأزرار */
+        .btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            color: #000;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00d4ff;
+        }
     </style>
 </head>
 <body>
@@ -248,7 +310,7 @@
     </nav>
 
     <!-- ===== GAME AREA ===== -->
-    <div class="s9a9im-game">
+    <div class="game-container">
         <!-- اختيار نمط اللعب -->
         <div class="game-mode-selector" id="modeSelector">
             <div class="mode-card" onclick="startGame('quick')">
@@ -382,24 +444,99 @@
     <!-- ===== JAVASCRIPT ===== -->
     <script>
         // ============================================
-        // نظام اللعبة باستخدام config.js
+        // تهيئة Firebase
         // ============================================
+        let auth = null;
+        let db = null;
+        let currentUser = null;
         
-        // التحقق من تحميل config.js
-        if (typeof APP_CONFIG === 'undefined') {
-            console.error('❌ ملف config.js غير محمل!');
-            alert('خطأ في تحميل الإعدادات. تأكد من وجود ملف config.js');
-        } else {
-            console.log('✅ config.js محمل:', APP_CONFIG.APP_NAME, APP_CONFIG.VERSION);
+        function initFirebase() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log('✅ Firebase جاهز للعبة');
+                
+                // التحقق من حالة المصادقة
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        currentUser = user;
+                        console.log('👤 لاعب مسجل:', user.email);
+                    } else {
+                        // إعادة توجيه غير المسجلين إلى الصفحة الرئيسية
+                        console.log('❌ يجب تسجيل الدخول أولاً');
+                        alert('يجب تسجيل الدخول للعب');
+                        window.location.href = 'index.html';
+                    }
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('❌ خطأ في تهيئة Firebase:', error);
+                return false;
+            }
         }
         
+        // ============================================
+        // إعدادات اللعبة
+        // ============================================
+        const GAME_CONFIG = {
+            APP_NAME: 'تحدي النخبة - اللعبة الفردية',
+            VERSION: '1.0.0',
+            
+            GAME_MODES: {
+                QUICK: { questions: 10, time: 15, basePoints: 1000 },
+                NORMAL: { questions: 20, time: 30, basePoints: 2500 },
+                CHALLENGE: { questions: 30, time: 20, basePoints: 5000 }
+            },
+            
+            SCORING_SYSTEM: {
+                EASY: { base: 10, timeMultiplier: 2 },
+                MEDIUM: { base: 15, timeMultiplier: 3 },
+                HARD: { base: 20, timeMultiplier: 5 },
+                
+                calculateScore: function(difficulty, timeLeft, streak) {
+                    const config = this[difficulty.toUpperCase()];
+                    if (!config) config = this.MEDIUM;
+                    
+                    let score = config.base;
+                    score += Math.floor(timeLeft * 0.5);
+                    
+                    // مكافأة التسلسل
+                    if (streak >= 3) score *= 1.5;
+                    if (streak >= 5) score *= 2;
+                    if (streak >= 10) score *= 3;
+                    
+                    return Math.floor(score);
+                }
+            },
+            
+            LEVELS: [
+                { level: 1, name: "مبتدئ", minXP: 0, badge: "🥚" },
+                { level: 2, name: "متوسط", minXP: 1000, badge: "🐣" },
+                { level: 3, name: "متقدم", minXP: 3000, badge: "🐓" },
+                { level: 4, name: "خبير", minXP: 7000, badge: "🦅" },
+                { level: 5, name: "أسطورة", minXP: 15000, badge: "👑" }
+            ],
+            
+            CATEGORIES: [
+                { id: 'science', name: 'العلوم', icon: '🧪' },
+                { id: 'history', name: 'التاريخ', icon: '🏛️' },
+                { id: 'geography', name: 'الجغرافيا', icon: '🗺️' },
+                { id: 'sports', name: 'الرياضة', icon: '⚽' },
+                { id: 'art', name: 'الفن', icon: '🎨' },
+                { id: 'technology', name: 'التكنولوجيا', icon: '💻' }
+            ]
+        };
+        
+        // ============================================
+        // نظام اللعبة
+        // ============================================
         class EliteChallengeGame {
             constructor() {
-                // استخدام الإعدادات من config.js
-                this.gameModes = APP_CONFIG.GAME_MODES;
-                this.scoringSystem = APP_CONFIG.SCORING_SYSTEM;
-                this.levels = APP_CONFIG.LEVELS;
-                this.categories = APP_CONFIG.CATEGORIES;
+                if (!initFirebase()) {
+                    throw new Error('لا يمكن تهيئة اللعبة بدون Firebase');
+                }
                 
                 this.gameMode = 'normal';
                 this.score = 0;
@@ -415,70 +552,105 @@
                 this.timer = null;
                 this.isGameActive = false;
                 this.questions = [];
+                this.loadedQuestions = [];
                 
-                // استخدام إعدادات النمط العادي من config.js
-                this.totalQuestions = this.gameModes.NORMAL.questions;
-                this.timePerQuestion = this.gameModes.NORMAL.time;
+                // استخدام إعدادات النمط العادي
+                const modeConfig = GAME_CONFIG.GAME_MODES.NORMAL;
+                this.totalQuestions = modeConfig.questions;
+                this.timePerQuestion = modeConfig.time;
                 
-                this.loadQuestions();
+                this.loadQuestionsFromFirestore();
             }
             
-            loadQuestions() {
-                // استخدام الفئات من config.js
-                this.questions = [
+            async loadQuestionsFromFirestore() {
+                try {
+                    console.log('📥 جاري تحميل الأسئلة...');
+                    
+                    // تحميل عينة من الأسئلة (يمكن التعديل حسب الحاجة)
+                    const snapshot = await db.collection('questions').limit(50).get();
+                    
+                    if (snapshot.empty) {
+                        console.log('⚠️ لا توجد أسئلة في قاعدة البيانات');
+                        this.loadBackupQuestions();
+                        return;
+                    }
+                    
+                    this.loadedQuestions = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        return {
+                            id: doc.id,
+                            question: data.text,
+                            category: data.category,
+                            difficulty: data.difficulty,
+                            options: data.options,
+                            correct: data.correctAnswer - 1, // تحويل من 1-4 إلى 0-3
+                            explanation: `هذا السؤال من فئة ${this.getCategoryName(data.category)}`,
+                            points: data.points || 10
+                        };
+                    });
+                    
+                    console.log(`✅ تم تحميل ${this.loadedQuestions.length} سؤال`);
+                    
+                } catch (error) {
+                    console.error('❌ خطأ في تحميل الأسئلة:', error);
+                    this.loadBackupQuestions();
+                }
+            }
+            
+            loadBackupQuestions() {
+                // أسئلة احتياطية في حال فشل الاتصال
+                this.loadedQuestions = [
                     {
                         id: 1,
                         question: "ما هو أسرع حيوان بري في العالم؟",
-                        category: this.categories[0].id,
+                        category: 'science',
                         difficulty: "easy",
                         options: ["الفهد", "الأسد", "النمر", "الذئب"],
                         correct: 0,
-                        explanation: "الفهد هو أسرع حيوان بري حيث تصل سرعته إلى 112 كم/ساعة"
+                        explanation: "الفهد هو أسرع حيوان بري حيث تصل سرعته إلى 112 كم/ساعة",
+                        points: 10
                     },
                     {
                         id: 2,
                         question: "في أي عام هبط الإنسان أول مرة على القمر؟",
-                        category: this.categories[1].id,
+                        category: 'history',
                         difficulty: "medium",
                         options: ["1965", "1969", "1972", "1958"],
                         correct: 1,
-                        explanation: "هبطت مركبة أبولو 11 على القمر في 20 يوليو 1969"
+                        explanation: "هبطت مركبة أبولو 11 على القمر في 20 يوليو 1969",
+                        points: 15
                     },
                     {
                         id: 3,
                         question: "ما هو العنصر الكيميائي الذي رمزه 'Au'؟",
-                        category: this.categories[0].id,
+                        category: 'science',
                         difficulty: "easy",
                         options: ["الفضة", "الذهب", "الألومنيوم", "الحديد"],
                         correct: 1,
-                        explanation: "Au هو رمز الذهب (Aurum) في الجدول الدوري"
-                    },
-                    {
-                        id: 4,
-                        question: "كم عدد لاعبي كرة القدم في كل فريق؟",
-                        category: this.categories[3].id,
-                        difficulty: "easy",
-                        options: ["10", "11", "12", "9"],
-                        correct: 1,
-                        explanation: "يتكون فريق كرة القدم من 11 لاعباً"
-                    },
-                    {
-                        id: 5,
-                        question: "من هو مؤلف رواية 'البؤساء'؟",
-                        category: this.categories[4].id,
-                        difficulty: "hard",
-                        options: ["فيكتور هوجو", "تشارلز ديكنز", "ليو تولستوي", "جي دي موباسان"],
-                        correct: 0,
-                        explanation: "رواية البؤساء من تأليف الكاتب الفرنسي فيكتور هوجو"
+                        explanation: "Au هو رمز الذهب (Aurum) في الجدول الدوري",
+                        points: 10
                     }
                 ];
+                
+                console.log('⚠️ استخدام الأسئلة الاحتياطية');
+            }
+            
+            getCategoryName(categoryId) {
+                const category = GAME_CONFIG.CATEGORIES.find(c => c.id === categoryId);
+                return category ? category.name : 'عام';
             }
             
             startGame(mode) {
-                this.gameMode = mode;
+                if (!currentUser) {
+                    alert('يجب تسجيل الدخول للعب');
+                    window.location.href = 'index.html';
+                    return;
+                }
                 
-                // استخدام إعدادات النمط من config.js
-                const modeConfig = this.gameModes[mode.toUpperCase()];
+                this.gameMode = mode.toUpperCase();
+                
+                // استخدام إعدادات النمط من config
+                const modeConfig = GAME_CONFIG.GAME_MODES[this.gameMode];
                 this.totalQuestions = modeConfig.questions;
                 this.timePerQuestion = modeConfig.time;
                 
@@ -489,14 +661,20 @@
                 document.getElementById('modeSelector').style.display = 'none';
                 document.getElementById('gameArea').style.display = 'block';
                 
-                // استخدام showNotification من config.js
-                if (typeof showNotification !== 'undefined') {
-                    showNotification(`بدأت اللعبة بنمط ${mode === 'quick' ? 'سريع' : mode === 'normal' ? 'عادي' : 'تحدي'}`, 'success');
-                }
+                this.showNotification(`بدأت اللعبة بنمط ${this.getModeName(mode)}`, 'success');
                 
                 this.updateUI();
                 this.showNextQuestion();
                 this.startTimer();
+            }
+            
+            getModeName(mode) {
+                const names = {
+                    'quick': 'سريع',
+                    'normal': 'عادي',
+                    'challenge': 'تحدي'
+                };
+                return names[mode] || mode;
             }
             
             resetGame() {
@@ -508,10 +686,11 @@
                 this.wrongAnswers = 0;
                 this.timeBonus = 0;
                 this.timeLeft = this.timePerQuestion;
+                this.questions = [...this.loadedQuestions]; // نسخ الأسئلة المحملة
             }
             
             showNextQuestion() {
-                if (this.currentQuestion >= this.totalQuestions) {
+                if (this.currentQuestion >= this.totalQuestions || this.questions.length === 0) {
                     this.endGame();
                     return;
                 }
@@ -520,17 +699,18 @@
                 document.getElementById('questionNumber').textContent = 
                     `${this.currentQuestion}/${this.totalQuestions}`;
                 
-                // اختيار سؤال عشوائي
+                // اختيار سؤال عشوائي وإزالته من القائمة لتجنب التكرار
                 const randomIndex = Math.floor(Math.random() * this.questions.length);
                 const q = this.questions[randomIndex];
+                this.questions.splice(randomIndex, 1); // إزالة السؤال المختار
                 
                 // عرض السؤال
                 document.getElementById('questionText').textContent = q.question;
                 
-                // عرض الفئة باستخدام config.js
-                const category = this.categories.find(c => c.id === q.category);
-                document.getElementById('questionCategory').textContent = category ? category.name : 'عام';
+                // عرض الفئة
+                document.getElementById('questionCategory').textContent = this.getCategoryName(q.category);
                 
+                // عرض مستوى الصعوبة
                 document.getElementById('questionDifficulty').textContent = 
                     q.difficulty === 'easy' ? 'سهل' : 
                     q.difficulty === 'medium' ? 'متوسط' : 'صعب';
@@ -543,14 +723,14 @@
                     const btn = document.createElement('button');
                     btn.className = 'option-btn';
                     btn.textContent = option;
-                    btn.onclick = () => this.checkAnswer(index, q.correct, q.explanation);
+                    btn.onclick = () => this.checkAnswer(index, q.correct, q.explanation, q.difficulty);
                     optionsGrid.appendChild(btn);
                 });
                 
                 document.getElementById('nextBtn').style.display = 'none';
             }
             
-            checkAnswer(selected, correct, explanation) {
+            checkAnswer(selected, correct, explanation, difficulty) {
                 if (!this.isGameActive) return;
                 
                 const buttons = document.querySelectorAll('.option-btn');
@@ -565,7 +745,7 @@
                     }
                 });
                 
-                // حساب النتيجة باستخدام config.js
+                // حساب النتيجة
                 if (selected === correct) {
                     this.correctAnswers++;
                     this.streak++;
@@ -575,12 +755,12 @@
                     if (this.streak >= 5) this.multiplier = 3;
                     if (this.streak >= 10) this.multiplier = 5;
                     
-                    // حساب النقاط باستخدام config.js
-                    const currentQuestion = this.questions.find(q => 
-                        q.question === document.getElementById('questionText').textContent
+                    // حساب النقاط
+                    const points = GAME_CONFIG.SCORING_SYSTEM.calculateScore(
+                        difficulty, 
+                        this.timeLeft, 
+                        this.streak
                     );
-                    const difficulty = currentQuestion?.difficulty || 'medium';
-                    const points = this.scoringSystem.calculateScore(difficulty, this.timeLeft, this.streak);
                     
                     this.score += points;
                     this.timeBonus += Math.floor(this.timeLeft * 2);
@@ -589,39 +769,15 @@
                     this.addExperience(points);
                     
                     // إظهار النقاط المكتسبة
-                    const pointsPopup = document.createElement('div');
-                    pointsPopup.textContent = `+${points}`;
-                    pointsPopup.style.cssText = `
-                        position: absolute;
-                        top: -30px;
-                        right: 50%;
-                        transform: translateX(50%);
-                        background: gold;
-                        color: black;
-                        padding: 5px 10px;
-                        border-radius: 20px;
-                        font-weight: bold;
-                        font-size: 1.2rem;
-                        z-index: 10;
-                    `;
-                    buttons[correct].appendChild(pointsPopup);
+                    this.showPointsAnimation(buttons[correct], points);
+                    
                 } else {
                     this.wrongAnswers++;
                     this.streak = 0;
                     this.multiplier = 1;
                     
                     // إظهار التفسير
-                    const explanationDiv = document.createElement('div');
-                    explanationDiv.textContent = explanation;
-                    explanationDiv.style.cssText = `
-                        margin-top: 15px;
-                        padding: 10px;
-                        background: rgba(255, 71, 87, 0.1);
-                        border-radius: 8px;
-                        border-right: 3px solid #ff4757;
-                        color: #ffa8b6;
-                    `;
-                    document.querySelector('.question-container').appendChild(explanationDiv);
+                    this.showExplanation(explanation);
                 }
                 
                 // تحديث الواجهة
@@ -631,8 +787,8 @@
                 document.getElementById('nextBtn').style.display = 'block';
                 document.getElementById('nextBtn').onclick = () => {
                     // إزالة التفسير إذا موجود
-                    const oldExplanation = document.querySelector('.question-container div:last-child');
-                    if (oldExplanation && oldExplanation.style.borderRight === '3px solid rgb(255, 71, 87)') {
+                    const oldExplanation = document.querySelector('.question-container > div:last-child');
+                    if (oldExplanation && oldExplanation.style.borderRight) {
                         oldExplanation.remove();
                     }
                     
@@ -642,18 +798,72 @@
                 };
             }
             
+            showPointsAnimation(element, points) {
+                const pointsPopup = document.createElement('div');
+                pointsPopup.textContent = `+${points}`;
+                pointsPopup.style.cssText = `
+                    position: absolute;
+                    top: -30px;
+                    right: 50%;
+                    transform: translateX(50%);
+                    background: linear-gradient(45deg, gold, orange);
+                    color: black;
+                    padding: 5px 15px;
+                    border-radius: 20px;
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                    z-index: 1000;
+                    animation: floatUp 1s ease-out forwards;
+                `;
+                
+                // إضافة أنيميشن CSS
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes floatUp {
+                        0% { transform: translateX(50%) translateY(0); opacity: 1; }
+                        100% { transform: translateX(50%) translateY(-50px); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                element.appendChild(pointsPopup);
+                
+                setTimeout(() => {
+                    pointsPopup.remove();
+                    style.remove();
+                }, 1000);
+            }
+            
+            showExplanation(explanation) {
+                const explanationDiv = document.createElement('div');
+                explanationDiv.textContent = explanation;
+                explanationDiv.style.cssText = `
+                    margin-top: 15px;
+                    padding: 15px;
+                    background: rgba(255, 71, 87, 0.1);
+                    border-radius: 10px;
+                    border-right: 3px solid #ff4757;
+                    color: #ffa8b6;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                `;
+                document.querySelector('.question-container').appendChild(explanationDiv);
+            }
+            
             addExperience(points) {
                 this.experience += Math.floor(points / 10);
-                this.checkLevelUp();
+                const leveledUp = this.checkLevelUp();
+                if (leveledUp) {
+                    this.showNotification(`🎉 لقد ارتقيت إلى المستوى ${this.level}!`, 'success');
+                }
                 this.updateLevelUI();
             }
             
             checkLevelUp() {
-                // استخدام نظام المستويات من config.js
-                for (let i = this.levels.length - 1; i >= 0; i--) {
-                    if (this.experience >= this.levels[i].minXP) {
-                        if (this.level !== this.levels[i].level) {
-                            this.level = this.levels[i].level;
+                for (let i = GAME_CONFIG.LEVELS.length - 1; i >= 0; i--) {
+                    if (this.experience >= GAME_CONFIG.LEVELS[i].minXP) {
+                        if (this.level !== GAME_CONFIG.LEVELS[i].level) {
+                            this.level = GAME_CONFIG.LEVELS[i].level;
                             return true;
                         }
                         break;
@@ -663,8 +873,8 @@
             }
             
             updateLevelUI() {
-                const currentLevel = this.levels.find(l => l.level === this.level);
-                const nextLevel = this.levels.find(l => l.level === this.level + 1);
+                const currentLevel = GAME_CONFIG.LEVELS.find(l => l.level === this.level);
+                const nextLevel = GAME_CONFIG.LEVELS.find(l => l.level === this.level + 1);
                 
                 if (currentLevel) {
                     document.getElementById('playerLevel').textContent = currentLevel.name;
@@ -675,6 +885,8 @@
                     const nextLevelXP = nextLevel.minXP;
                     const progress = ((this.experience - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
                     document.getElementById('levelProgress').style.width = `${Math.min(progress, 100)}%`;
+                } else {
+                    document.getElementById('levelProgress').style.width = '100%';
                 }
             }
             
@@ -717,9 +929,16 @@
                 document.getElementById('multiplier').textContent = `${this.multiplier}x`;
             }
             
-            endGame() {
+            async endGame() {
                 this.isGameActive = false;
                 clearInterval(this.timer);
+                
+                try {
+                    // حفظ نتيجة اللعبة في Firestore
+                    await this.saveGameResult();
+                } catch (error) {
+                    console.error('❌ خطأ في حفظ النتيجة:', error);
+                }
                 
                 // تحديث واجهة النتيجة
                 document.getElementById('finalScore').textContent = this.score.toLocaleString();
@@ -730,37 +949,99 @@
                 // مستوى جديد
                 const leveledUp = this.checkLevelUp();
                 if (leveledUp) {
-                    const newLevelData = this.levels.find(l => l.level === this.level);
-                    document.getElementById('newLevel').textContent = `مستوى ${newLevelData.level}: ${newLevelData.name}`;
-                    document.getElementById('levelReward').textContent = `مكافأة: ${newLevelData.badge} + ${1000 * newLevelData.level} نقطة`;
+                    const newLevelData = GAME_CONFIG.LEVELS.find(l => l.level === this.level);
+                    document.getElementById('newLevel').textContent = 
+                        `${newLevelData.badge} مستوى ${newLevelData.level}: ${newLevelData.name}`;
+                    document.getElementById('levelReward').textContent = 
+                        `مكافأة: ${newLevelData.badge} + ${1000 * newLevelData.level} نقطة`;
                 } else {
-                    document.getElementById('newLevel').textContent = `مستوى ${this.level}`;
-                    document.getElementById('levelReward').textContent = `تابع اللعب للارتقاء للمستوى التالي!`;
+                    const currentLevelData = GAME_CONFIG.LEVELS.find(l => l.level === this.level);
+                    document.getElementById('newLevel').textContent = 
+                        `${currentLevelData.badge} مستوى ${currentLevelData.level}`;
+                    document.getElementById('levelReward').textContent = 
+                        `تابع اللعب للارتقاء للمستوى التالي!`;
                 }
                 
                 // إظهار نافذة النتيجة
                 document.getElementById('resultOverlay').style.display = 'flex';
                 
-                // إشعار النهاية
-                if (typeof showNotification !== 'undefined') {
-                    showNotification(`🎉 انتهت الجولة! حصلت على ${this.score.toLocaleString()} نقطة`, 'success');
-                }
+                this.showNotification(
+                    `🎉 انتهت الجولة! حصلت على ${this.score.toLocaleString()} نقطة`, 
+                    'success'
+                );
+            }
+            
+            async saveGameResult() {
+                if (!currentUser || !db) return;
+                
+                const gameData = {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    gameMode: this.gameMode,
+                    score: this.score,
+                    correctAnswers: this.correctAnswers,
+                    wrongAnswers: this.wrongAnswers,
+                    timeBonus: this.timeBonus,
+                    level: this.level,
+                    experience: this.experience,
+                    streak: this.streak,
+                    playedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('gameResults').add(gameData);
+                console.log('✅ تم حفظ نتيجة اللعبة');
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: bold;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                    background: ${type === 'success' ? 'linear-gradient(45deg, #00b09b, #96c93d)' : 
+                               type === 'error' ? 'linear-gradient(45deg, #ff416c, #ff4b2b)' : 
+                               'linear-gradient(45deg, #00e676, #00bcd4)'};
+                    border-left: 5px solid ${type === 'success' ? '#00b09b' : 
+                                        type === 'error' ? '#ff416c' : '#00e676'};
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
             }
         }
         
         // ============================================
         // الدوال العامة
         // ============================================
-        
-        let game;
+        let game = null;
         
         function initGame() {
-            game = new EliteChallengeGame();
-            console.log('🎮 نظام تحدي النخبة جاهز');
+            try {
+                game = new EliteChallengeGame();
+                console.log('🎮 نظام تحدي النخبة جاهز');
+            } catch (error) {
+                console.error('❌ خطأ في تهيئة اللعبة:', error);
+                alert('خطأ في تهيئة اللعبة. تأكد من اتصال الإنترنت');
+            }
         }
         
         function startGame(mode) {
-            if (!game) initGame();
+            if (!game) {
+                alert('اللعبة غير جاهزة بعد. حاول مرة أخرى.');
+                return;
+            }
+            
             game.startGame(mode);
         }
         
@@ -776,6 +1057,8 @@
         }
         
         function shareResult() {
+            if (!game) return;
+            
             const score = document.getElementById('finalScore').textContent;
             const level = document.getElementById('newLevel').textContent;
             const message = `🎮 حصلت على ${score} نقطة في تحدي النخبة ووصلت إلى ${level}!`;
@@ -787,17 +1070,26 @@
                     url: window.location.href
                 });
             } else {
-                navigator.clipboard.writeText(message);
-                if (typeof showNotification !== 'undefined') {
-                    showNotification('✅ تم نسخ النتيجة إلى الحافظة!', 'success');
-                } else {
+                navigator.clipboard.writeText(message).then(() => {
+                    game.showNotification('✅ تم نسخ النتيجة إلى الحافظة!', 'success');
+                }).catch(() => {
                     alert('تم نسخ النتيجة إلى الحافظة!');
-                }
+                });
             }
         }
         
         // بدء اللعبة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', initGame);
+        
+        // إضافة أنيميشن CSS
+        const gameStyle = document.createElement('style');
+        gameStyle.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(gameStyle);
     </script>
 </body>
 </html>

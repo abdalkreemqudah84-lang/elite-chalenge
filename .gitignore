@@ -1,0 +1,55 @@
+# ملفات البيئة
+.env
+.env.local
+.env.development
+.env.production
+.env.example
+example.env
+
+# Firebase
+firebase-config.js
+config.js
+firebase-debug.log
+firestore-debug.log
+.firebase/
+firebase-export*.json
+
+# أنظمة التشغيل
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Desktop.ini
+
+# VS Code والإيديتورات
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Node.js (إذا كنت ستستخدمه لاحقاً)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ملفات البناء
+dist/
+build/
+*.min.js
+*.min.css
+
+# ملفات النظام
+*.log
+*.tmp
+*.temp
+*.cache
+
+# نظام الملفات المؤقتة
+*~
+
+# ملفات Git
+.git/

@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <!-- بعد style.css -->
-<script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تحدي النخبة - Elite Challenge</title>
@@ -11,6 +9,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
     
     <style>
         /* ===== RESET ===== */
@@ -163,16 +167,14 @@
         }
 
         .hero-title {
-    font-size: 3.5rem;
-    margin-bottom: 25px;
-    background: linear-gradient(45deg, #00d4ff, #0099ff, #6a11cb);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    text-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
-    line-height: 1.2;
-}
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            background: linear-gradient(45deg, #00d4ff, #0099ff, #6a11cb);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
 
         .highlight {
             display: block;
@@ -830,26 +832,31 @@
 <body>
     <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
-        <div class="nav-links">
-    <a href="index.html" class="nav-link active">
-        <i class="fas fa-home"></i> الرئيسية
-    </a>
-    <a href="game.html" class="nav-link">
-        <i class="fas fa-gamepad"></i> اللعبة الفردية
-    </a>
-    <a href="team-game.html" class="nav-link">
-        <i class="fas fa-users"></i> اللعبة الجماعية
-    </a>
-    <a href="challenges.html" class="nav-link">
-        <i class="fas fa-trophy"></i> التحديات
-    </a>
-    <a href="leaderboard.html" class="nav-link">
-        <i class="fas fa-chart-line"></i> المتصدرين
-    </a>
-    <a href="admin.html" class="nav-link">
-        <i class="fas fa-user-shield"></i> التحكم
-    </a>
-</div>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-crown"></i>
+                <span>تحدي النخبة</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i> الرئيسية
+                </a>
+                <a href="game.html" class="nav-link">
+                    <i class="fas fa-gamepad"></i> اللعبة الفردية
+                </a>
+                <a href="team-game.html" class="nav-link">
+                    <i class="fas fa-users"></i> اللعبة الجماعية
+                </a>
+                <a href="challenges.html" class="nav-link">
+                    <i class="fas fa-trophy"></i> التحديات
+                </a>
+                <a href="leaderboard.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i> المتصدرين
+                </a>
+                <a href="admin.html" class="nav-link">
+                    <i class="fas fa-user-shield"></i> التحكم
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -1020,119 +1027,7 @@
             </div>
         </section>
     </div>
-<!-- ===== FEATURED GAMES ===== -->
-<section class="featured-section">
-    <div class="container">
-        <h2 class="section-title">
-            <i class="fas fa-gamepad"></i> أنظمة اللعب
-        </h2>
-        <p class="section-subtitle">
-            اختر نمط اللعب الذي يناسبك
-        </p>
-        
-        <div class="games-grid">
-            <!-- اللعبة الفردية -->
-            <div class="game-card">
-                <div class="game-icon" style="background: linear-gradient(45deg, #00d4ff, #0099ff);">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h3>اللعبة الفردية</h3>
-                <p>تحدٍ معرفي شخصي مع نظام نقاط متقدم</p>
-                <div class="game-stats">
-                    <div class="stat">
-                        <i class="fas fa-coins"></i>
-                        <span>نظام نقاط</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-chart-line"></i>
-                        <span>مستويات</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-trophy"></i>
-                        <span>إنجازات</span>
-                    </div>
-                </div>
-                <a href="game.html" class="btn btn-primary">
-                    <i class="fas fa-play"></i> ابدأ اللعب
-                </a>
-            </div>
-            
-            <!-- اللعبة الجماعية -->
-            <div class="game-card">
-                <div class="game-icon" style="background: linear-gradient(45deg, #ff4757, #ff6b6b);">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>اللعبة الجماعية</h3>
-                <p>تحدي الأصدقاء في معركة معرفية مشتعلة</p>
-                <div class="game-stats">
-                    <div class="stat">
-                        <i class="fas fa-user-friends"></i>
-                        <span>فريقان</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-stopwatch"></i>
-                        <span>تايمر</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-chess-board"></i>
-                        <span>منافسة</span>
-                    </div>
-                </div>
-                <a href="team-game.html" class="btn btn-primary">
-                    <i class="fas fa-users"></i> شكل فريقك
-                </a>
-            </div>
-            
-            <!-- التحديات -->
-            <div class="game-card">
-                <div class="game-icon" style="background: linear-gradient(45deg, #2ed573, #00d4ff);">
-                    <i class="fas fa-trophy"></i>
-                </div>
-                <h3>التحديات</h3>
-                <p>أكمل المهام اليومية والأسبوعية للمكافآت</p>
-                <div class="game-stats">
-                    <div class="stat">
-                        <i class="fas fa-calendar-day"></i>
-                        <span>يومية</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-calendar-week"></i>
-                        <span>أسبوعية</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-award"></i>
-                        <span>مكافآت</span>
-                    </div>
-                </div>
-                <a href="challenges.html" class="btn btn-primary">
-                    <i class="fas fa-trophy"></i> استعرض التحديات
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- ===== LEADERBOARD PREVIEW ===== -->
-<section class="leaderboard-preview">
-    <div class="container">
-        <h2 class="section-title">
-            <i class="fas fa-crown"></i> المتصدرين
-        </h2>
-        <p class="section-subtitle">
-            أفضل 5 لاعبين هذا الأسبوع
-        </p>
-        
-        <div class="mini-leaderboard" id="miniLeaderboard">
-            <!-- سيتم ملؤه بالجافاسكريبت -->
-        </div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="leaderboard.html" class="btn btn-secondary">
-                <i class="fas fa-chart-line"></i> عرض كل المتصدرين
-            </a>
-        </div>
-    </div>
-</section>
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="footer-content">
@@ -1141,13 +1036,13 @@
                 <span>تحدي النخبة</span>
             </div>
             <div class="footer-links">
-                <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-                <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="javascript:void(0)" title="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="javascript:void(0)" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="javascript:void(0)" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="javascript:void(0)" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
             </div>
             <p class="copyright">
-                © 2024 تحدي النخبة. جميع الحقوق محفوظة.
+                ©️ 2024 تحدي النخبة. جميع الحقوق محفوظة.
             </p>
             <p class="version">
                 الإصدار 1.0.0 | متصل بقاعدة البيانات: 
@@ -1169,23 +1064,23 @@
                     <label for="playerEmail">
                         <i class="fas fa-envelope"></i> البريد الإلكتروني
                     </label>
-                    <input type="email" id="playerEmail" placeholder="example@gmail.com">
+                    <input type="email" id="playerEmail" placeholder="example@gmail.com" required>
                 </div>
                 <div class="input-group">
                     <label for="playerPassword">
                         <i class="fas fa-lock"></i> كلمة المرور
                     </label>
-                    <input type="password" id="playerPassword" placeholder="أدخل كلمة المرور">
+                    <input type="password" id="playerPassword" placeholder="أدخل كلمة المرور" required>
                 </div>
                 <button class="login-btn" onclick="playerLogin()">
                     <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
                 </button>
                 <div style="text-align: center; margin-top: 20px;">
-                    <a href="#" onclick="showForgotPassword()" style="color: #00d4ff; text-decoration: none;">
+                    <a href="javascript:void(0)" onclick="showForgotPassword()" style="color: #00d4ff; text-decoration: none;">
                         <i class="fas fa-key"></i> نسيت كلمة المرور؟
                     </a>
                     <br>
-                    <a href="#" onclick="showRegister()" style="color: #00d4ff; text-decoration: none; margin-top: 10px; display: inline-block;">
+                    <a href="javascript:void(0)" onclick="showRegister()" style="color: #00d4ff; text-decoration: none; margin-top: 10px; display: inline-block;">
                         <i class="fas fa-user-plus"></i> إنشاء حساب جديد
                     </a>
                 </div>
@@ -1205,13 +1100,13 @@
                     <label for="adminEmail">
                         <i class="fas fa-envelope"></i> بريد المشرف
                     </label>
-                    <input type="email" id="adminEmail" placeholder="admin@elite.com">
+                    <input type="email" id="adminEmail" placeholder="admin@elite.com" required>
                 </div>
                 <div class="input-group">
                     <label for="adminPassword">
                         <i class="fas fa-lock"></i> كلمة مرور المشرف
                     </label>
-                    <input type="password" id="adminPassword" placeholder="كلمة المرور الخاصة">
+                    <input type="password" id="adminPassword" placeholder="كلمة المرور الخاصة" required>
                 </div>
                 <button class="login-btn" onclick="adminLogin()">
                     <i class="fas fa-sign-in-alt"></i> دخول المشرف
@@ -1232,25 +1127,25 @@
                     <label for="registerName">
                         <i class="fas fa-user"></i> الاسم الكامل
                     </label>
-                    <input type="text" id="registerName" placeholder="أدخل اسمك الكامل">
+                    <input type="text" id="registerName" placeholder="أدخل اسمك الكامل" required>
                 </div>
                 <div class="input-group">
                     <label for="registerEmail">
                         <i class="fas fa-envelope"></i> البريد الإلكتروني
                     </label>
-                    <input type="email" id="registerEmail" placeholder="example@gmail.com">
+                    <input type="email" id="registerEmail" placeholder="example@gmail.com" required>
                 </div>
                 <div class="input-group">
                     <label for="registerPassword">
                         <i class="fas fa-lock"></i> كلمة المرور
                     </label>
-                    <input type="password" id="registerPassword" placeholder="كلمة مرور قوية">
+                    <input type="password" id="registerPassword" placeholder="كلمة مرور قوية" required minlength="6">
                 </div>
                 <div class="input-group">
                     <label for="registerConfirmPassword">
                         <i class="fas fa-lock"></i> تأكيد كلمة المرور
                     </label>
-                    <input type="password" id="registerConfirmPassword" placeholder="أعد إدخال كلمة المرور">
+                    <input type="password" id="registerConfirmPassword" placeholder="أعد إدخال كلمة المرور" required>
                 </div>
                 <button class="login-btn" onclick="registerPlayer()">
                     <i class="fas fa-user-plus"></i> إنشاء الحساب
@@ -1271,7 +1166,7 @@
                     <label for="forgotEmail">
                         <i class="fas fa-envelope"></i> البريد الإلكتروني
                     </label>
-                    <input type="email" id="forgotEmail" placeholder="example@gmail.com">
+                    <input type="email" id="forgotEmail" placeholder="example@gmail.com" required>
                 </div>
                 <button class="login-btn" onclick="sendResetEmail()">
                     <i class="fas fa-paper-plane"></i> إرسال رابط الاستعادة
@@ -1280,111 +1175,71 @@
         </div>
     </div>
 
-    <!-- Verification Modal -->
-    <div id="verificationModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('verificationModal')">&times;</span>
-            <h2 class="modal-title">
-                <i class="fas fa-shield-alt"></i> تأكيد البريد الإلكتروني
-            </h2>
-            <div class="login-form">
-                <p style="text-align: center; margin-bottom: 20px; color: #aaa;">
-                    أدخل رمز التحقق المكون من 6 أرقام الذي أرسلناه إلى بريدك
-                </p>
-                <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
-                    <input type="text" maxlength="1" style="width: 50px; height: 60px; text-align: center; font-size: 24px;">
-                    <input type="text" maxlength="1" style="width: 50px; height: 60px; text-align: center; font-size: 24px;">
-                    <input type="text" maxlength="1" style="width: 50px; height: 60px; text-align: center; font-size: 24px;">
-                    <input type="text" maxlength="1" style="width: 50px; height: 60px; text-align: center; font-size: 24px;">
-                    <input type="text" maxlength="1" style="width: 50px; height: 60px; text-align: center; font-size: 24px;">
-                    <input type="text" maxlength="1" style="width: 50px; height: 60px; text-align: center; font-size: 24px;">
-                </div>
-                <button class="login-btn" onclick="verifyEmail()">
-                    <i class="fas fa-check"></i> تأكيد
-                </button>
-                <p style="text-align: center; margin-top: 20px; color: #aaa;">
-                    لم يصلك الرمز؟ <a href="#" onclick="resendCode()" style="color: #00d4ff;">إعادة الإرسال</a>
-                </p>
-            </div>
-        </div>
-    </div>
-
     <!-- Alerts Container -->
     <div id="alertContainer"></div>
 
     <!-- ===== JavaScript ===== -->
-    <script src="script.js"></script>
-    <script src="firebase.js" type="module"></script>
-    
     <script>
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ تم تحميل الصفحة بنجاح');
             updateDBStatus();
             
-            // إضافة cursor pointer لجميع العناصر القابلة للنقر
-            addCursorPointer();
-            
             // إضافة event listeners
             setupEventListeners();
+            
+            // تهيئة Firebase
+            initFirebase();
             
             // التحقق من تسجيل الدخول السابق
             checkPreviousLogin();
         });
         
+        // ===== FIREBASE INITIALIZATION =====
+        let auth = null;
+        let db = null;
+        
+        function initFirebase() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log('✅ تم تهيئة Firebase بنجاح');
+                document.getElementById('db-status').textContent = 'متصل ✅';
+                document.getElementById('db-status').style.color = '#00d4ff';
+            } catch (error) {
+                console.error('❌ خطأ في تهيئة Firebase:', error);
+                document.getElementById('db-status').textContent = 'غير متصل ❌';
+                document.getElementById('db-status').style.color = '#ff4757';
+            }
+        }
+        
         // ===== DATABASE STATUS =====
         function updateDBStatus() {
             setTimeout(() => {
-                document.getElementById('db-status').textContent = 'متصل ✅';
-                document.getElementById('db-status').style.color = '#00d4ff';
+                if (db) {
+                    document.getElementById('db-status').textContent = 'متصل ✅';
+                    document.getElementById('db-status').style.color = '#00d4ff';
+                }
             }, 1000);
-        }
-        
-        // ===== ADD CURSOR POINTER =====
-        function addCursorPointer() {
-            const elements = [
-                '.action-card',
-                '.nav-link',
-                '.login-option',
-                '.category',
-                '.stat',
-                'button',
-                '.close',
-                '.footer-links a'
-            ];
-            
-            elements.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => {
-                    el.style.cursor = 'pointer';
-                });
-            });
-            
-            console.log('✅ تم إضافة cursor pointer لجميع العناصر');
         }
         
         // ===== SETUP EVENT LISTENERS =====
         function setupEventListeners() {
-            // أزرار التسجيل
-            document.querySelectorAll('.action-card[onclick*="showPlayerLogin"]').forEach(btn => {
-                btn.addEventListener('click', showPlayerLogin);
-            });
-            
-            document.querySelectorAll('.action-card[onclick*="showAdminLogin"]').forEach(btn => {
-                btn.addEventListener('click', showAdminLogin);
-            });
-            
-            // إغلاق النوافذ بالضغط خارجها
-            window.addEventListener('click', function(event) {
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-            });
-            
             // إغلاق النوافذ بالضغط على ESC
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
                     closeAllModals();
                 }
+            });
+            
+            // إغلاق النوافذ بالضغط خارجها
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
             });
         }
         
@@ -1409,96 +1264,121 @@
             document.getElementById('forgotPasswordModal').style.display = 'flex';
         }
         
-        function showVerification() {
-            console.log('📧 فتح نافذة تأكيد البريد');
-            document.getElementById('verificationModal').style.display = 'flex';
-        }
-        
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
         
         function closeAllModals() {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
+            document.querySelectorAll('.modal').forEach(modal => {
                 modal.style.display = 'none';
             });
         }
         
         // ===== LOGIN FUNCTIONS =====
-        function playerLogin() {
+        async function playerLogin() {
             const email = document.getElementById('playerEmail').value;
             const password = document.getElementById('playerPassword').value;
             
-            if (!email || !password) {
-                showAlert('error', '❌ الرجاء ملء جميع الحقول');
+            if (!validateEmail(email)) {
+                showAlert('error', '❌ بريد إلكتروني غير صالح');
                 return;
             }
             
-            showAlert('success', '✅ جاري تسجيل الدخول...');
+            if (!password || password.length < 6) {
+                showAlert('error', '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                return;
+            }
             
-            // محاكاة الاتصال بالخادم
-            setTimeout(() => {
-                localStorage.setItem('user', JSON.stringify({
-                    email: email,
-                    type: 'player',
-                    name: 'اللاعب',
-                    freePlays: 1
-                }));
+            showAlert('info', '⏳ جاري تسجيل الدخول...');
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
                 showAlert('success', '✅ تم تسجيل الدخول بنجاح!');
                 closeModal('playerLoginModal');
+                
+                // حفظ بيانات المستخدم
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    name: user.displayName || 'اللاعب',
+                    type: 'player',
+                    freePlays: 1
+                }));
                 
                 // الانتقال إلى صفحة الإعدادات
                 setTimeout(() => {
                     window.location.href = 'setup.html';
                 }, 1500);
-            }, 1000);
+                
+            } catch (error) {
+                handleAuthError(error);
+            }
         }
         
-        function adminLogin() {
+        async function adminLogin() {
             const email = document.getElementById('adminEmail').value;
             const password = document.getElementById('adminPassword').value;
             
-            if (!email || !password) {
-                showAlert('error', '❌ الرجاء ملء جميع الحقول');
+            if (!validateEmail(email)) {
+                showAlert('error', '❌ بريد إلكتروني غير صالح');
                 return;
             }
             
-            // بيانات المشرف الآمنة
-            const adminCredentials = {
-                email: 'admin@elite.com',
-                password: 'Abdulkareem2002'
-            };
+            showAlert('info', '⏳ جاري التحقق من صلاحيات المشرف...');
             
-            if (email === adminCredentials.email && password === adminCredentials.password) {
-                showAlert('success', '✅ تم دخول المشرف بنجاح!');
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                localStorage.setItem('user', JSON.stringify({
-                    email: email,
-                    type: 'admin',
-                    name: 'المشرف',
-                    unlimited: true
-                }));
+                // التحقق من أن المستخدم مشرف
+                const userDoc = await db.collection('admins').doc(user.uid).get();
                 
-                closeModal('adminLoginModal');
+                if (userDoc.exists) {
+                    showAlert('success', '✅ تم دخول المشرف بنجاح!');
+                    closeModal('adminLoginModal');
+                    
+                    localStorage.setItem('user', JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName || 'المشرف',
+                        type: 'admin',
+                        unlimited: true
+                    }));
+                    
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1500);
+                } else {
+                    await auth.signOut();
+                    showAlert('error', '❌ ليس لديك صلاحية المشرف');
+                }
                 
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 1500);
-            } else {
-                showAlert('error', '❌ بيانات الدخول غير صحيحة');
+            } catch (error) {
+                handleAuthError(error);
             }
         }
         
-        function registerPlayer() {
+        async function registerPlayer() {
             const name = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
             
-            if (!name || !email || !password || !confirmPassword) {
-                showAlert('error', '❌ الرجاء ملء جميع الحقول');
+            // التحقق من المدخلات
+            if (!name || name.length < 2) {
+                showAlert('error', '❌ الاسم يجب أن يكون حرفين على الأقل');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showAlert('error', '❌ بريد إلكتروني غير صالح');
+                return;
+            }
+            
+            if (!password || password.length < 6) {
+                showAlert('error', '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
                 return;
             }
             
@@ -1507,75 +1387,114 @@
                 return;
             }
             
-            if (password.length < 6) {
-                showAlert('error', '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-                return;
-            }
+            showAlert('info', '⏳ جاري إنشاء الحساب...');
             
-            showAlert('success', '✅ جاري إنشاء الحساب...');
-            
-            setTimeout(() => {
-                localStorage.setItem('user', JSON.stringify({
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // تحديث اسم المستخدم
+                await user.updateProfile({
+                    displayName: name
+                });
+                
+                // حفظ بيانات إضافية في Firestore
+                await db.collection('users').doc(user.uid).set({
                     name: name,
                     email: email,
                     type: 'player',
                     freePlays: 1,
-                    emailVerified: false
-                }));
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 
                 showAlert('success', '✅ تم إنشاء الحساب بنجاح!');
                 closeModal('registerModal');
                 
-                // عرض نافذة تأكيد البريد
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    name: name,
+                    type: 'player',
+                    freePlays: 1
+                }));
+                
+                // إرسال بريد التحقق
+                await user.sendEmailVerification();
+                showAlert('info', '📧 تم إرسال رابط التحقق إلى بريدك الإلكتروني');
+                
                 setTimeout(() => {
-                    showVerification();
-                }, 500);
-            }, 1500);
+                    window.location.href = 'setup.html';
+                }, 2000);
+                
+            } catch (error) {
+                handleAuthError(error);
+            }
         }
         
-        function sendResetEmail() {
+        async function sendResetEmail() {
             const email = document.getElementById('forgotEmail').value;
             
-            if (!email) {
-                showAlert('error', '❌ الرجاء إدخال البريد الإلكتروني');
+            if (!validateEmail(email)) {
+                showAlert('error', '❌ بريد إلكتروني غير صالح');
                 return;
             }
             
-            showAlert('success', '📧 جاري إرسال رابط الاستعادة...');
+            showAlert('info', '⏳ جاري إرسال رابط الاستعادة...');
             
-            setTimeout(() => {
+            try {
+                await auth.sendPasswordResetEmail(email);
                 showAlert('success', '✅ تم إرسال رابط استعادة كلمة المرور إلى بريدك');
                 closeModal('forgotPasswordModal');
-            }, 1000);
+            } catch (error) {
+                handleAuthError(error);
+            }
         }
         
-        function verifyEmail() {
-            showAlert('success', '✅ جاري التحقق من الرمز...');
+        // ===== HELPER FUNCTIONS =====
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function handleAuthError(error) {
+            console.error('Auth error:', error);
             
-            setTimeout(() => {
-                showAlert('success', '✅ تم تأكيد بريدك الإلكتروني بنجاح!');
-                closeModal('verificationModal');
-                
-                // الانتقال إلى اللعبة
-                setTimeout(() => {
-                    window.location.href = 'setup.html';
-                }, 1500);
-            }, 1000);
+            switch(error.code) {
+                case 'auth/invalid-email':
+                    showAlert('error', '❌ بريد إلكتروني غير صالح');
+                    break;
+                case 'auth/user-disabled':
+                    showAlert('error', '❌ هذا الحساب معطل');
+                    break;
+                case 'auth/user-not-found':
+                    showAlert('error', '❌ لم يتم العثور على الحساب');
+                    break;
+                case 'auth/wrong-password':
+                    showAlert('error', '❌ كلمة المرور غير صحيحة');
+                    break;
+                case 'auth/email-already-in-use':
+                    showAlert('error', '❌ البريد الإلكتروني مستخدم بالفعل');
+                    break;
+                case 'auth/weak-password':
+                    showAlert('error', '❌ كلمة المرور ضعيفة جداً');
+                    break;
+                case 'auth/operation-not-allowed':
+                    showAlert('error', '❌ عملية التسجيل غير مسموحة حالياً');
+                    break;
+                default:
+                    showAlert('error', `❌ خطأ: ${error.message}`);
+            }
         }
         
-        function resendCode() {
-            showAlert('info', '📨 جاري إعادة إرسال رمز التحقق...');
-        }
-        
-        // ===== CHECK PREVIOUS LOGIN =====
         function checkPreviousLogin() {
             const user = localStorage.getItem('user');
             if (user) {
                 const userData = JSON.parse(user);
-                if (userData.type === 'admin') {
-                    console.log('🔓 تم اكتشاف دخول مشرف سابق');
-                } else {
-                    console.log('👤 تم اكتشاف دخول لاعب سابق');
+                console.log(`👋 مرحباً بعودتك ${userData.name}`);
+                
+                // تحديث حالة Firebase إذا كان المستخدم مسجلاً
+                if (auth && auth.currentUser) {
+                    console.log('✅ Firebase authentication نشطة');
                 }
             }
         }
@@ -1614,7 +1533,7 @@
         }
         
         window.viewLeaderboard = function() {
-            showAlert('info', '🏆 لوحة المتصدرين قريباً!');
+            window.location.href = 'leaderboard.html';
         }
         
         // ===== ALERT SYSTEM =====
@@ -1643,20 +1562,11 @@
             }
         }
         
-        // ===== FIREBASE CONNECTION =====
-        async function initFirebase() {
-            try {
-                // سيتم استدعاء هذه الدالة من firebase.js
-                console.log('🔥 تهيئة Firebase...');
-                return true;
-            } catch (error) {
-                console.error('❌ خطأ في تهيئة Firebase:', error);
-                return false;
-            }
-        }
-        
         // ===== LOGOUT FUNCTION =====
         window.logout = function() {
+            if (auth) {
+                auth.signOut();
+            }
             localStorage.removeItem('user');
             showAlert('success', '✅ تم تسجيل الخروج بنجاح');
             setTimeout(() => {
@@ -1664,57 +1574,5 @@
             }, 1500);
         }
     </script>
-    <script>
-// عرض المتصدرين المصغر في الصفحة الرئيسية
-function loadMiniLeaderboard() {
-    const miniLeaderboard = document.getElementById('miniLeaderboard');
-    
-    if (!miniLeaderboard) return; // إذا العنصر غير موجود
-    
-    // بيانات تجريبية
-    const topPlayers = [
-        { rank: 1, name: "أحمد محمد", level: "الأسطورة", points: "45,680" },
-        { rank: 2, name: "سارة خالد", level: "الخبير", points: "38,950" },
-        { rank: 3, name: "محمد علي", level: "الخبير", points: "32,450" },
-        { rank: 4, name: "فاطمة حسن", level: "المتقدم", points: "28,700" },
-        { rank: 5, name: "خالد أحمد", level: "المتقدم", points: "24,500" }
-    ];
-    
-    miniLeaderboard.innerHTML = '';
-    
-    topPlayers.forEach(player => {
-        const item = document.createElement('div');
-        item.className = 'leaderboard-item';
-        item.innerHTML = `
-            <div class="leaderboard-rank rank-${player.rank}">
-                ${player.rank}
-            </div>
-            <div class="leaderboard-player">
-                <div class="leaderboard-player-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div>
-                    <div class="leaderboard-player-name">${player.name}</div>
-                    <div class="leaderboard-player-level">${player.level}</div>
-                </div>
-            </div>
-            <div class="leaderboard-score">
-                ${player.points}
-            </div>
-        `;
-        miniLeaderboard.appendChild(item);
-    });
-}
-
-// تهيئة الصفحة الرئيسية
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏠 الصفحة الرئيسية جاهزة');
-    
-    loadMiniLeaderboard();
-    
-    // تحديث كل 10 ثواني
-    setInterval(loadMiniLeaderboard, 10000);
-});
-</script>
 </body>
 </html>

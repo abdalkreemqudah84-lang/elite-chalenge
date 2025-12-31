@@ -1,37 +1,53 @@
-// firebase.js - تهيئة Firebase النسخة 9
+// firebase.js - Firebase v9 Modular SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    getDocs, 
+    doc, 
+    setDoc, 
+    deleteDoc,
+    updateDoc,
+    query,
+    where,
+    orderBy,
+    limit
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// ⚠️ سنضيف بيانات Firebase الحقيقية في الخطوة القادمة
-// الآن نستخدم إعدادات تجريبية
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+// استيراد الإعدادات من الملف الخارجي
+import { firebaseConfig } from './firebase-config.js';
 
-// تهيئة التطبيق
+// تهيئة Firebase
 const app = initializeApp(firebaseConfig);
 
-// الحصول على خدمة Firestore
+// تهيئة Firestore
 const db = getFirestore(app);
 
-// تصدير الدوال للاستخدام في الملفات الأخرى
+// تصدير الدوال الرئيسية
 export {
-  db,
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  setDoc,
-  deleteDoc
+    db,
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    setDoc,
+    deleteDoc,
+    updateDoc,
+    query,
+    where,
+    orderBy,
+    limit
 };
 
-// دالة مساعدة للاتصال بقاعدة البيانات
-export const initFirebase = () => {
-  console.log("✅ Firebase متصل بنجاح");
-  return db;
+// دالة مساعدة للتحقق من الاتصال
+export const checkConnection = async () => {
+    try {
+        const testRef = collection(db, 'connection_test');
+        await addDoc(testRef, { timestamp: new Date() });
+        return true;
+    } catch (error) {
+        console.error("فشل الاتصال بقاعدة البيانات:", error);
+        return false;
+    }
 };
